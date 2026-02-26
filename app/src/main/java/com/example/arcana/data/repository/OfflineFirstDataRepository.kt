@@ -413,8 +413,8 @@ class OfflineFirstDataRepository @Inject constructor(
                     ChangeType.CREATE -> {
                         networkDataSource.createUser(
                             CreateUserRequest(
-                                change.name!!,
-                                change.job!!
+                                requireNotNull(change.name) { "name is required for CREATE change" },
+                                requireNotNull(change.job) { "job is required for CREATE change" }
                             )
                         )
                         Timber.d("Successfully processed CREATE for user ${change.userId}")
@@ -422,7 +422,10 @@ class OfflineFirstDataRepository @Inject constructor(
                     ChangeType.UPDATE -> {
                         networkDataSource.updateUser(
                             change.userId,
-                            CreateUserRequest(change.name!!, change.job!!)
+                            CreateUserRequest(
+                                requireNotNull(change.name) { "name is required for UPDATE change" },
+                                requireNotNull(change.job) { "job is required for UPDATE change" }
+                            )
                         )
                         Timber.d("Successfully processed UPDATE for user ${change.userId}")
                     }

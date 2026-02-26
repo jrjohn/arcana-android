@@ -252,8 +252,8 @@ class CachingDataRepository @Inject constructor(
         return CacheStats(
             pageCacheSize = pageCache.size(),
             pageCacheMaxSize = pageCache.maxSize(),
-            hasUserListCache = fullUserListCache != null && !fullUserListCache!!.isExpired(),
-            hasCountCache = totalCountCache != null && !totalCountCache!!.isExpired()
+            hasUserListCache = fullUserListCache?.isExpired() == false,
+            hasCountCache = totalCountCache?.isExpired() == false
         )
     }
 
