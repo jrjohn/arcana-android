@@ -342,6 +342,7 @@ open class ArchitectureReportTask : DefaultTask() {
                 } else {
                     """
                     <table>
+                        <caption>ViewModel Pattern Compliance</caption>
                         <thead>
                             <tr>
                                 <th>ViewModel</th>
@@ -416,14 +417,14 @@ open class ArchitectureReportTask : DefaultTask() {
                 }}
             </div>
 
-            <!-- TODOs -->
+            <!-- Pending Tasks -->
             <div class="section">
-                <h2 class="section-title">TODOs in Codebase</h2>
+                <h2 class="section-title">Pending Tasks in Codebase</h2>
                 ${if (todos.isEmpty()) {
-                    "<p class='icon-success'><span class='checkmark'>✅</span> No TODOs found</p>"
+                    "<p class='icon-success'><span class='checkmark'>✅</span> No pending tasks found</p>"
                 } else {
                     """
-                    <p><strong>Total TODOs: ${todos.size}</strong></p>
+                    <p><strong>Total pending tasks: ${todos.size}</strong></p>
                     <ul>
                         ${todos.joinToString("") { "<li><code>${it.file}:${it.line}</code> - ${it.text}</li>" }}
                     </ul>

@@ -385,6 +385,7 @@ open class ErrorCodeDocumentationTask : DefaultTask() {
             <div class="section">
                 <h2 class="section-title"><span class="icon">📖</span> Code Ranges</h2>
                 <table>
+                    <caption>Code Ranges</caption>
                     <thead>
                         <tr>
                             <th>Range</th>
@@ -460,9 +461,11 @@ open class ErrorCodeDocumentationTask : DefaultTask() {
 
     private fun generateTable(codes: List<ErrorCodeInfo>, isWarning: Boolean): String {
         val codeClass = if (isWarning) "warning-code" else "error-code"
+        val caption = if (isWarning) "Warning Codes" else "Error Codes"
 
         return """
             <table>
+                <caption>$caption</caption>
                 <thead>
                     <tr>
                         <th>Code</th>
