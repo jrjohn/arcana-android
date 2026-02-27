@@ -1,4 +1,4 @@
-name: PR Agent (Claude Review)
+name: PR Agent (Gemini Review)
 on:
   pull_request:
     types: [opened, reopened, ready_for_review, synchronize]
@@ -17,9 +17,9 @@ jobs:
         uses: qodo-ai/pr-agent@main
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-          config.model: "claude-sonnet-4-5"
-          config.fallback_models: '["claude-haiku-4-5"]'
+          config.model: "gemini/gemini-2.0-flash"
+          config.fallback_models: '["gemini/gemini-1.5-flash"]'
+          GOOGLE_AI_STUDIO.GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           github_action_config.auto_review: "true"
           github_action_config.auto_describe: "true"
           github_action_config.auto_improve: "true"
