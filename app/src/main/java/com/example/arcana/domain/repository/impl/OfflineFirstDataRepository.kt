@@ -1,4 +1,4 @@
-package com.example.arcana.data.repository
+package com.example.arcana.domain.repository.impl
 
 import com.example.arcana.core.common.NetworkMonitor
 import com.example.arcana.domain.repository.DataRepository

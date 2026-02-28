@@ -1,7 +1,7 @@
 package com.example.arcana.domain.service
 
 import com.example.arcana.data.model.User
-import com.example.arcana.data.repository.CacheEventBus
+import com.example.arcana.domain.repository.impl.CacheEventBus
 import com.example.arcana.domain.repository.DataRepository
 import com.example.arcana.sync.Synchronizer
 import kotlinx.coroutines.ExperimentalCoroutinesApi

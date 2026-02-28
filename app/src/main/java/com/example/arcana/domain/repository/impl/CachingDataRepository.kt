@@ -1,4 +1,4 @@
-package com.example.arcana.data.repository
+package com.example.arcana.domain.repository.impl
 
 import android.util.LruCache
 import com.example.arcana.domain.repository.DataRepository
