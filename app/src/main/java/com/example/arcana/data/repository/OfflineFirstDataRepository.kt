@@ -1,6 +1,7 @@
 package com.example.arcana.data.repository
 
 import com.example.arcana.core.common.NetworkMonitor
+import com.example.arcana.domain.repository.DataRepository
 import com.example.arcana.data.local.UserChangeDao
 import com.example.arcana.data.local.UserDao
 import com.example.arcana.data.model.ChangeType

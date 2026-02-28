@@ -1,6 +1,7 @@
 package com.example.arcana.data.repository
 
 import android.util.LruCache
+import com.example.arcana.domain.repository.DataRepository
 import com.example.arcana.data.model.User
 import com.example.arcana.sync.Syncable
 import kotlinx.coroutines.CoroutineScope

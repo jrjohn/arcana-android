@@ -2,7 +2,7 @@ package com.example.arcana.di
 
 import com.example.arcana.data.repository.CacheEventBus
 import com.example.arcana.data.repository.CachingDataRepository
-import com.example.arcana.data.repository.DataRepository
+import com.example.arcana.domain.repository.DataRepository
 import com.example.arcana.data.repository.OfflineFirstDataRepository
 import com.example.arcana.sync.Syncable
 import dagger.Binds
