@@ -1,7 +1,7 @@
 package com.example.arcana.di
 
 import com.example.arcana.domain.service.UserService
-import com.example.arcana.domain.service.UserServiceImpl
+import com.example.arcana.domain.service.impl.UserServiceImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn

@@ -1,4 +1,4 @@
-package com.example.arcana.domain.service
+package com.example.arcana.domain.service.impl
 
 import com.example.arcana.data.model.User
 import com.example.arcana.domain.repository.impl.CacheEventBus
