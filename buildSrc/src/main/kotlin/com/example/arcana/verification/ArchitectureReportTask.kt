@@ -589,7 +589,7 @@ open class ArchitectureReportTask : DefaultTask() {
         return todos
     }
 
-    private fun generateRecommendations( // NOSONAR kotlin:S3776analysis: ProjectAnalysis): List<Recommendation> {
+    private fun generateRecommendations(analysis: ProjectAnalysis): List<Recommendation> { // NOSONAR kotlin:S3776
         val recommendations = mutableListOf<Recommendation>()
 
         // Check for ViewModels not following pattern

@@ -53,7 +53,7 @@ class RuleEngine(private val projectDir: File) {
     /**
      * Check a single file against a rule
      */
-    private fun checkFile( // NOSONAR kotlin:S3776file: File, rule: Rule, category: String) {
+    private fun checkFile(file: File, rule: Rule, category: String) { // NOSONAR kotlin:S3776
         val content = try {
             file.readText()
         } catch (e: Exception) {
