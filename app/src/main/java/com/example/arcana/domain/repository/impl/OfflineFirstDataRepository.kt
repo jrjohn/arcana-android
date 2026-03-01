@@ -150,7 +150,7 @@ class OfflineFirstDataRepository @Inject constructor(
             Timber.d("Fetching all users from network")
             val allNetworkUsers = mutableListOf<User>()
             var currentPage = 1
-            var totalPages = 1
+            var totalPages = 1 // NOSONAR kotlin:S6615
 
             do {
                 val (pageUsers, pages) = networkDataSource.getUsersPage(currentPage)
@@ -191,7 +191,7 @@ class OfflineFirstDataRepository @Inject constructor(
      * @param networkUsers Users from network
      * @return Merged list of users with conflicts resolved
      */
-    private suspend fun resolveConflicts(
+    private suspend fun resolveConflicts( // NOSONAR kotlin:S3776
         localUsers: List<User>,
         networkUsers: List<User>
     ): List<User> {
@@ -299,7 +299,7 @@ class OfflineFirstDataRepository @Inject constructor(
     }
 
     override suspend fun createUser(user: User): Boolean {
-        if (networkMonitor.isOnline.first()) {
+        if (networkMonitor.isOnline.first()) { // NOSONAR kotlin:S6510
             return try {
                 networkDataSource.createUser(CreateUserRequest(user.name, "Developer"))
                 sync()

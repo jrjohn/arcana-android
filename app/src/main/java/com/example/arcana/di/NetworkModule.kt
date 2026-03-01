@@ -5,7 +5,6 @@ import com.example.arcana.data.remote.ApiService
 import com.example.arcana.data.remote.JsonLoggingInterceptor
 import com.example.arcana.data.remote.createApiService
 import de.jensklingenberg.ktorfit.Ktorfit
-import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
@@ -23,6 +22,8 @@ import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 import timber.log.Timber
 import javax.inject.Singleton
+
+private const val API_KEY_HEADER = API_KEY_HEADER
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -48,7 +49,7 @@ object NetworkModule {
                     }
                 }
                 level = LogLevel.HEADERS  // Use BODY for full logging, HEADERS for headers only
-                sanitizeHeader { header -> header == "x-api-key" }
+                sanitizeHeader { header -> header == API_KEY_HEADER }
             }
 
             // Option 2: Custom JSON Logging Interceptor (formatted JSON logging)
@@ -56,12 +57,12 @@ object NetworkModule {
             install(JsonLoggingInterceptor) {
                 enabled = BuildConfig.DEBUG  // Only log in debug builds
                 logHeaders = true
-                sanitizedHeaders = setOf("x-api-key", "Authorization", "Cookie")
+                sanitizedHeaders = setOf(API_KEY_HEADER, "Authorization", "Cookie")
             }
 
             defaultRequest {
                 // Use API key from BuildConfig
-                header("x-api-key", BuildConfig.API_KEY)
+                header(API_KEY_HEADER, BuildConfig.API_KEY)
                 contentType(ContentType.Application.Json)
             }
 

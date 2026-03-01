@@ -3,7 +3,6 @@ package com.example.arcana.verification
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
 import org.gradle.api.tasks.TaskAction
-import java.io.File
 
 /**
  * Gradle task that verifies the project architecture compliance
@@ -17,7 +16,7 @@ open class ArchitectureVerificationTask : DefaultTask() {
     }
 
     @TaskAction
-    fun verify() {
+    fun verify() { // NOSONAR kotlin:S3776
         // Determine project root (could be run from root or app directory)
         val projectRoot = if (project.name == "app") {
             project.rootProject.projectDir

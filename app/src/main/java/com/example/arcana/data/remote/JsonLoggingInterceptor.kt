@@ -39,6 +39,12 @@ class JsonLoggingConfig {
  * }
  * ```
  */
+private object LoggingConstants {
+    const val TAG_REQUEST = "API Request"
+    const val TAG_RESPONSE = "API Response"
+    const val SEPARATOR = LoggingConstants.SEPARATOR
+}
+
 val JsonLoggingInterceptor = createClientPlugin("JsonLoggingInterceptor", ::JsonLoggingConfig) {
     val config = pluginConfig
     val json = Json {
@@ -47,14 +53,14 @@ val JsonLoggingInterceptor = createClientPlugin("JsonLoggingInterceptor", ::Json
     }
 
     // Intercept and log requests
-    onRequest { request, content ->
+    onRequest { request, _ ->
         if (!config.enabled) return@onRequest
 
         val method = request.method.value
         val url = request.url.toString()
 
-        Timber.tag("API Request").d("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
-        Timber.tag("API Request").d("→ $method $url")
+        Timber.tag(LoggingConstants.TAG_REQUEST).d(LoggingConstants.SEPARATOR)
+        Timber.tag(LoggingConstants.TAG_REQUEST).d("→ $method $url")
 
         if (config.logHeaders) {
             val headers = request.headers.entries()
@@ -67,13 +73,13 @@ val JsonLoggingInterceptor = createClientPlugin("JsonLoggingInterceptor", ::Json
                     "  $key: $value"
                 }
             if (headers.isNotEmpty()) {
-                Timber.tag("API Request").d("Headers:\n$headers")
+                Timber.tag(LoggingConstants.TAG_REQUEST).d("Headers:\n$headers")
             }
         }
     }
 
     // Transform response to log the body without consuming it
-    transformResponseBody { response, content, requestedType ->
+    transformResponseBody { response, content, _ ->
         if (!config.enabled) return@transformResponseBody content
 
         val contentType = response.contentType()
@@ -92,7 +98,7 @@ val JsonLoggingInterceptor = createClientPlugin("JsonLoggingInterceptor", ::Json
                 // Return a new channel with the same data so it can be consumed by the caller
                 ByteReadChannel(bytes)
             } catch (e: Exception) {
-                Timber.tag("API Response").e(e, "Failed to log response body")
+                Timber.tag(LoggingConstants.TAG_RESPONSE).e(e, "Failed to log response body")
                 content
             }
         } else {
@@ -114,9 +120,9 @@ private fun logResponse(
     val statusDesc = response.status.description
     val duration = response.responseTime.timestamp - response.requestTime.timestamp
 
-    Timber.tag("API Response").d("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
-    Timber.tag("API Response").d("← $method $url")
-    Timber.tag("API Response").d("Status: $status $statusDesc (${duration}ms)")
+    Timber.tag(LoggingConstants.TAG_RESPONSE).d(LoggingConstants.SEPARATOR)
+    Timber.tag(LoggingConstants.TAG_RESPONSE).d("← $method $url")
+    Timber.tag(LoggingConstants.TAG_RESPONSE).d("Status: $status $statusDesc (${duration}ms)")
 
     if (config.logHeaders) {
         val headers = response.headers.entries()
@@ -124,7 +130,7 @@ private fun logResponse(
                 "  $key: ${values.joinToString()}"
             }
         if (headers.isNotEmpty()) {
-            Timber.tag("API Response").d("Headers:\n$headers")
+            Timber.tag(LoggingConstants.TAG_RESPONSE).d("Headers:\n$headers")
         }
     }
 
@@ -140,10 +146,10 @@ private fun logResponse(
             } catch (e: Exception) {
                 bodyText // Not valid JSON, use as-is
             }
-            Timber.tag("API Response").d("JSON Body:\n$prettyJson")
+            Timber.tag(LoggingConstants.TAG_RESPONSE).d("JSON Body:\n$prettyJson")
         } else {
-            Timber.tag("API Response").d("Body: [Empty]")
+            Timber.tag(LoggingConstants.TAG_RESPONSE).d("Body: [Empty]")
         }
     }
-    Timber.tag("API Response").d("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+    Timber.tag(LoggingConstants.TAG_RESPONSE).d(LoggingConstants.SEPARATOR)
 }

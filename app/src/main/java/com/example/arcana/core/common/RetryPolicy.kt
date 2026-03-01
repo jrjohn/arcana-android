@@ -2,7 +2,6 @@ package com.example.arcana.core.common
 
 import kotlinx.coroutines.delay
 import timber.log.Timber
-import kotlin.math.pow
 
 /**
  * Retry policy for network operations with exponential backoff

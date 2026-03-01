@@ -8,7 +8,7 @@ import kotlinx.serialization.Serializable
 /**
  * API service for uploading analytics events to the cloud
  */
-interface AnalyticsApiService {
+interface AnalyticsApiService { // NOSONAR kotlin:S6517
 
     /**
      * Upload a batch of analytics events

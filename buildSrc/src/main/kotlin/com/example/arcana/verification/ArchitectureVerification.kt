@@ -297,8 +297,7 @@ class ArchitectureVerification(private val projectDir: File) {
             val fileName = file.relativeTo(projectDir).path
 
             // Domain models should not have Android dependencies
-            if (fileName.contains("domain/model")) {
-                if (content.contains("import android.") || content.contains("import androidx.")) {
+            if (fileName.contains("domain/model") && (content.contains("import android.") || content.contains("import androidx."))) {
                     warnings.add(Warning(
                         Severity.ERROR,
                         Category.LAYER_VIOLATION,

@@ -100,7 +100,7 @@ class HomeViewModel @Inject constructor(
             .onEach { users ->
                 _output.value = _output.value.copy(users = users)
             }
-            .catch { error ->
+            .catch { _ ->
                 viewModelScope.launch {
                     _effect.send(Effect.ShowSnackbar("Error loading users from local source"))
                 }

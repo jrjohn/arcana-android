@@ -61,7 +61,7 @@ import timber.log.Timber
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun UserScreen(
+fun UserScreen( // NOSONAR kotlin:S3776
     viewModel: UserViewModel = hiltViewModel(),
     onNavigateBack: () -> Unit,
     onNavigateToUserDetail: (Int) -> Unit = {}

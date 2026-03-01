@@ -1,7 +1,6 @@
 package com.example.arcana.verification
 
 import org.yaml.snakeyaml.Yaml
-import org.yaml.snakeyaml.constructor.Constructor
 import java.io.File
 
 /**

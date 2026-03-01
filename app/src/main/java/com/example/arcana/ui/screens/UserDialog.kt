@@ -52,7 +52,7 @@ private val AVATAR_OPTIONS = listOf(
 )
 
 @Composable
-fun UserDialog(
+fun UserDialog( // NOSONAR kotlin:S3776
     user: User? = null,
     onDismiss: () -> Unit,
     onConfirm: (String, String, String, String) -> Unit

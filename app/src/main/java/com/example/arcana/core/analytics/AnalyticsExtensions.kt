@@ -1,5 +1,7 @@
 package com.example.arcana.core.analytics
 
+private const val UNKNOWN_ERROR = UNKNOWN_ERROR
+
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.onEach
@@ -69,12 +71,12 @@ fun <T> Flow<T>.trackFlow(
                     params + mapOf(
                         Params.DURATION_MS to duration.toString(),
                         Params.SUCCESS to "false",
-                        Params.ERROR_MESSAGE to (error.message ?: "Unknown error")
+                        Params.ERROR_MESSAGE to (error.message ?: UNKNOWN_ERROR)
                     )
                 } else {
                     params + mapOf(
                         Params.SUCCESS to "false",
-                        Params.ERROR_MESSAGE to (error.message ?: "Unknown error")
+                        Params.ERROR_MESSAGE to (error.message ?: UNKNOWN_ERROR)
                     )
                 }
 
@@ -140,7 +142,7 @@ suspend fun <T> trackSync(
             mapOf(
                 Params.SCREEN_NAME to screenName,
                 Params.DURATION_MS to syncDuration.toString(),
-                Params.ERROR_MESSAGE to (error.message ?: "Unknown error")
+                Params.ERROR_MESSAGE to (error.message ?: UNKNOWN_ERROR)
             )
         )
 
@@ -209,7 +211,7 @@ suspend fun <T> trackCrudOperation(
             failedEventName,
             params + mapOf(
                 Params.DURATION_MS to duration.toString(),
-                Params.ERROR_MESSAGE to (error.message ?: "Unknown error")
+                Params.ERROR_MESSAGE to (error.message ?: UNKNOWN_ERROR)
             )
         )
 
