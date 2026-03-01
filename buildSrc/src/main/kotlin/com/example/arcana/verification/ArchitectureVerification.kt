@@ -306,7 +306,6 @@ class ArchitectureVerification(private val projectDir: File) {
                         "Domain models must not have Android framework dependencies"
                     ))
                 }
-            }
         }
     }
 
