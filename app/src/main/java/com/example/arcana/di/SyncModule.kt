@@ -9,7 +9,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-abstract class SyncModule // NOSONAR kotlin:S6526 {
+abstract class SyncModule { // NOSONAR kotlin:S6526
 
     @Binds
     @Singleton

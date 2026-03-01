@@ -8,7 +8,7 @@ import dagger.hilt.components.SingletonComponent
 
 @Module
 @InstallIn(SingletonComponent::class)
-abstract class NetworkMonitorModule // NOSONAR kotlin:S6526 {
+abstract class NetworkMonitorModule { // NOSONAR kotlin:S6526
 
     @Binds
     abstract fun bindNetworkMonitor(
