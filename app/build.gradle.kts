@@ -29,6 +29,7 @@ android {
 
     buildTypes {
         debug {
+            enableUnitTestCoverage = true
             buildConfigField("String", "API_BASE_URL", "\"https://reqres.in/api/\"")
             buildConfigField("String", "API_KEY", "\"reqres-free-v1\"")
             buildConfigField("Boolean", "ENABLE_LOGGING", "true")
