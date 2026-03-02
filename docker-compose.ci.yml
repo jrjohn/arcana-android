@@ -23,7 +23,7 @@ services:
     volumes:
       - .:/project
       - gradle-cache:/root/.gradle
-    command: ./gradlew testDebugUnitTest --no-daemon --continue
+    command: ./gradlew testDebugUnitTest createDebugUnitTestCoverageReport --no-daemon --continue
 
 volumes:
   gradle-cache:

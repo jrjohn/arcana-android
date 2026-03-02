@@ -19,6 +19,7 @@ import org.mockito.Mockito.clearInvocations
 import org.mockito.kotlin.any
 import org.mockito.kotlin.anyOrNull
 import org.mockito.kotlin.argumentCaptor
+import org.mockito.kotlin.atLeastOnce
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
@@ -173,7 +174,9 @@ class OfflineFirstDataRepositoryTest {
 
         // Then
         assertEquals(testUsers.size, result)
-        verify(userDao).getUsers()
+        // The repository's init-block coroutine (Dispatchers.Default) may also call getUsers()
+        // asynchronously, so we use atLeastOnce() to avoid flaky TooManyActualInvocations.
+        verify(userDao, atLeastOnce()).getUsers()
     }
 
     // ==================== createUser Tests ====================
