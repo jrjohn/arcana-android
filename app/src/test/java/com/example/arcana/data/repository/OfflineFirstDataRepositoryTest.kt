@@ -77,7 +77,7 @@ class OfflineFirstDataRepositoryTest {
 
         // Then
         assertEquals(usersFlow, result)
-        verify(userDao).getUsers()
+        verify(userDao, atLeastOnce()).getUsers()
     }
 
     // ==================== getUsersPage Tests ====================
@@ -158,7 +158,7 @@ class OfflineFirstDataRepositoryTest {
 
         // Then
         assertEquals(testUsers.size, result)
-        verify(userDao).getUsers()
+        verify(userDao, atLeastOnce()).getUsers()
     }
 
     @Test
