@@ -150,7 +150,7 @@ class AppErrorTest {
         val error = AppError.fromHttpCode(403)
 
         assertTrue(error is AppError.AuthError)
-        assertEquals("Authentication required", error.message)
+        assertEquals("Access forbidden", error.message)
     }
 
     @Test
@@ -192,7 +192,7 @@ class AppErrorTest {
 
         assertTrue(error is AppError.ServerError)
         assertEquals(404, error.code)
-        assertEquals("Client error: 404", error.message)
+        assertEquals("Resource not found", error.message)
     }
 
     @Test
