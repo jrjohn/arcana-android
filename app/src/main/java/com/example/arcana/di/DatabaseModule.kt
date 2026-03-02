@@ -8,6 +8,7 @@ import com.example.arcana.data.local.AppDatabase
 import com.example.arcana.data.local.UserChangeDao
 import com.example.arcana.data.local.UserDao
 import com.example.arcana.data.local.dao.AnalyticsEventDao
+import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext

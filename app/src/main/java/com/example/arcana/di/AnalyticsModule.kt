@@ -5,6 +5,7 @@ import com.example.arcana.core.analytics.PersistentAnalyticsTracker
 import com.example.arcana.data.network.AnalyticsApiService
 import com.example.arcana.data.network.createAnalyticsApiService
 import dagger.Binds
+import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
