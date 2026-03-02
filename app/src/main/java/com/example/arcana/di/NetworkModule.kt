@@ -5,7 +5,7 @@ import com.example.arcana.data.remote.ApiService
 import com.example.arcana.data.remote.JsonLoggingInterceptor
 import com.example.arcana.data.remote.createApiService
 import de.jensklingenberg.ktorfit.Ktorfit
-import dagger.Module
+import dagger.Module // NOSONAR kotlin:S1128
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent

@@ -6,7 +6,7 @@ import com.example.arcana.domain.repository.DataRepository
 import com.example.arcana.domain.repository.impl.OfflineFirstDataRepository
 import com.example.arcana.sync.Syncable
 import dagger.Binds
-import dagger.Module
+import dagger.Module // NOSONAR kotlin:S1128
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent

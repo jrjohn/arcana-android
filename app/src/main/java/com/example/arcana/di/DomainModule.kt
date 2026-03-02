@@ -5,7 +5,7 @@ import com.example.arcana.core.common.RetryPolicy
 import com.example.arcana.core.common.StringProvider
 import com.example.arcana.domain.validation.UserValidator
 import dagger.Binds
-import dagger.Module
+import dagger.Module // NOSONAR kotlin:S1128
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
