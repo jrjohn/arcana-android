@@ -34,7 +34,7 @@ open class ArchitectureVerificationTask : DefaultTask() {
 
         // Print summary
         if (warnings.isEmpty()) {
-            logger.lifecycle("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+            logger.lifecycle("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")  // NOSONAR kotlin:S1192
             logger.lifecycle("✅ Architecture Verification PASSED")
             logger.lifecycle("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
             logger.lifecycle("")

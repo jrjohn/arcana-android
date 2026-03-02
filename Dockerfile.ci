@@ -8,16 +8,14 @@ ENV ANDROID_HOME=/opt/android-sdk
 ENV ANDROID_SDK_ROOT=${ANDROID_HOME}
 ENV PATH="${PATH}:${ANDROID_HOME}/cmdline-tools/latest/bin:${ANDROID_HOME}/platform-tools"
 
-# Install dependencies and Android command-line tools
+# Install dependencies, Android SDK, accept licenses, set permissions
 RUN apt-get update && apt-get install -y --no-install-recommends curl unzip \
     && rm -rf /var/lib/apt/lists/* \
     && mkdir -p ${ANDROID_HOME}/cmdline-tools \
     && cd ${ANDROID_HOME}/cmdline-tools \
     && curl -fsSL https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip -o cmdline-tools.zip \
-    && unzip cmdline-tools.zip && mv cmdline-tools latest && rm cmdline-tools.zip
-
-# Accept licenses and install SDK
-RUN yes | sdkmanager --licenses > /dev/null 2>&1 \
+    && unzip cmdline-tools.zip && mv cmdline-tools latest && rm cmdline-tools.zip \
+    && yes | sdkmanager --licenses > /dev/null 2>&1 \
     && sdkmanager "platforms;android-36" "build-tools;36.0.0" "platform-tools"
 
 WORKDIR /project

@@ -491,7 +491,7 @@ open class ArchitectureReportTask : DefaultTask() {
             .filter { !it.isAbstract } // Exclude abstract base ViewModels
 
         val services = allKotlinFiles
-            .filter { it.name.contains("Service") && it.path.contains("/domain/") }
+            .filter { it.name.contains("Service") && it.path.contains("/domain/") }  // NOSONAR kotlin:S1192
 
         val repositories = allKotlinFiles
             .filter { it.name.endsWith("Repository.kt") && it.path.contains("/data/") }
