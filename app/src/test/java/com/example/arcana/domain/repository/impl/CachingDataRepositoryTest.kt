@@ -370,7 +370,7 @@ class CachingDataRepositoryTest {
         cacheEventBus.emit(CacheInvalidationEvent.UserCreated(userId = 1))
 
         // Give coroutine a chance to process
-        kotlinx.coroutines.delay(100)
+        Thread.sleep(300)
 
         // Cache should be invalidated
         repository.getTotalUserCount()
@@ -384,7 +384,7 @@ class CachingDataRepositoryTest {
 
         cacheEventBus.emit(CacheInvalidationEvent.InvalidateAll)
 
-        kotlinx.coroutines.delay(100)
+        Thread.sleep(300)
 
         repository.getTotalUserCount()
         verify(delegate, org.mockito.kotlin.times(2)).getTotalUserCount()
@@ -397,7 +397,7 @@ class CachingDataRepositoryTest {
 
         cacheEventBus.emit(CacheInvalidationEvent.SyncCompleted)
 
-        kotlinx.coroutines.delay(100)
+        Thread.sleep(300)
 
         repository.getTotalUserCount()
         verify(delegate, org.mockito.kotlin.times(2)).getTotalUserCount()
@@ -410,7 +410,7 @@ class CachingDataRepositoryTest {
 
         cacheEventBus.emit(CacheInvalidationEvent.UserUpdated(userId = 1))
 
-        kotlinx.coroutines.delay(100)
+        Thread.sleep(300)
 
         repository.getTotalUserCount()
         verify(delegate, org.mockito.kotlin.times(2)).getTotalUserCount()
@@ -423,7 +423,7 @@ class CachingDataRepositoryTest {
 
         cacheEventBus.emit(CacheInvalidationEvent.UserDeleted(userId = 1))
 
-        kotlinx.coroutines.delay(100)
+        Thread.sleep(300)
 
         repository.getTotalUserCount()
         verify(delegate, org.mockito.kotlin.times(2)).getTotalUserCount()
