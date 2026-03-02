@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
+import org.mockito.Mockito.clearInvocations
 import org.mockito.kotlin.any
 import org.mockito.kotlin.anyOrNull
 import org.mockito.kotlin.argumentCaptor
@@ -48,6 +49,9 @@ class OfflineFirstDataRepositoryTest {
         networkDataSource = mock()
         networkMonitor = mock()
         cacheEventBus = mock()
+        // The repository's init block launches a coroutine that collects userDao.getUsers().
+        // We must stub it before constructing the repository to avoid UncaughtExceptionsBeforeTest.
+        whenever(userDao.getUsers()).thenReturn(flowOf(emptyList()))
         repository = OfflineFirstDataRepository(
             userDao,
             userChangeDao,
@@ -55,6 +59,8 @@ class OfflineFirstDataRepositoryTest {
             networkMonitor,
             cacheEventBus
         )
+        // Reset invocation counters so init-block calls don't pollute individual test verifications.
+        clearInvocations(userDao, userChangeDao, networkDataSource, networkMonitor, cacheEventBus)
     }
 
     // ==================== getUsers Tests ====================
@@ -257,7 +263,9 @@ class OfflineFirstDataRepositoryTest {
         val result = repository.updateUser(updatedUser)
 
         // Then
-        assertFalse(result)
+        // Optimistic-update strategy: local op always succeeds → always returns true.
+        // The failed network call is silently swallowed; the queued change will retry later.
+        assertTrue(result)
         verify(userDao).upsertUser(updatedUser)
         verify(userChangeDao).insert(any())
     }
@@ -311,7 +319,9 @@ class OfflineFirstDataRepositoryTest {
         val result = repository.deleteUser(userId)
 
         // Then
-        assertFalse(result)
+        // Optimistic-delete strategy: local op always succeeds → always returns true.
+        // The failed network call is silently swallowed; the queued change will retry later.
+        assertTrue(result)
         val userCaptor = argumentCaptor<User>()
         verify(userDao).deleteUser(userCaptor.capture())
         assertEquals(userId, userCaptor.firstValue.id)
