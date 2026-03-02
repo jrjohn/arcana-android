@@ -354,7 +354,9 @@ class ErrorCodeTest {
     @Test
     fun `getAllErrorCodes returns all error codes`() {
         val errorCodes = ErrorCode.getAllErrorCodes()
-        assertEquals(32, errorCodes.size)
+        // 5 Network + 6 Validation (incl. E2005_FIELD_TOO_SHORT) + 5 Server +
+        // 5 Auth + 4 Data + 4 Database + 4 System = 33
+        assertEquals(33, errorCodes.size)
     }
 
     @Test

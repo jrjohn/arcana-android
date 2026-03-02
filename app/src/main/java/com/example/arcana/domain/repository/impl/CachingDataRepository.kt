@@ -1,6 +1,5 @@
 package com.example.arcana.domain.repository.impl
 
-import android.util.LruCache
 import com.example.arcana.domain.repository.DataRepository
 import com.example.arcana.data.model.User
 import com.example.arcana.sync.Syncable
@@ -54,27 +53,27 @@ class CachingDataRepository @Inject constructor(
     }
 
     /**
+     * JVM-compatible LRU cache backed by LinkedHashMap (replaces android.util.LruCache
+     * so that CachingDataRepository is testable in plain JVM unit tests without Robolectric).
+     */
+    private class JvmLruCache<K, V>(private val maxEntries: Int) {
+        private val map = object : LinkedHashMap<K, V>(16, 0.75f, true) {
+            override fun removeEldestEntry(eldest: Map.Entry<K, V>?): Boolean = size > maxEntries
+        }
+        operator fun get(key: K): V? = map[key]
+        fun put(key: K, value: V): V? = map.put(key, value)
+        fun remove(key: K): V? = map.remove(key)
+        fun evictAll() = map.clear()
+        fun size(): Int = map.size
+        fun maxSize(): Int = maxEntries
+    }
+
+    /**
      * Cache for paginated user lists
      * Key: page number
      * Value: (List<User>, totalPages)
      */
-    private val pageCache = object : LruCache<Int, CacheEntry<Pair<List<User>, Int>>>(CACHE_SIZE_PAGES) {
-        override fun sizeOf(key: Int, value: CacheEntry<Pair<List<User>, Int>>): Int {
-            // Size is based on number of users in the page
-            return value.data.first.size
-        }
-
-        override fun entryRemoved(
-            evicted: Boolean,
-            key: Int,
-            oldValue: CacheEntry<Pair<List<User>, Int>>,
-            newValue: CacheEntry<Pair<List<User>, Int>>?
-        ) {
-            if (evicted) {
-                Timber.d("CachingDataRepository: Evicted page $key from cache")
-            }
-        }
-    }
+    private val pageCache = JvmLruCache<Int, CacheEntry<Pair<List<User>, Int>>>(CACHE_SIZE_PAGES)
 
     /**
      * Cache for total user count

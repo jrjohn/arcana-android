@@ -50,9 +50,10 @@ class ConnectivityManagerNetworkMonitorTest {
 
     @Test
     fun `NetworkMonitor interface has isOnline property`() {
-        // Verify the interface declares the isOnline property via reflection
+        // Kotlin may generate the JVM accessor as either "getIsOnline" or "isOnline"
+        // depending on compiler version/target. Check for both to be version-safe.
         val methods = NetworkMonitor::class.java.methods
-        val hasIsOnline = methods.any { it.name == "getIsOnline" }
+        val hasIsOnline = methods.any { it.name == "getIsOnline" || it.name == "isOnline" }
         assertTrue(hasIsOnline)
     }
 
