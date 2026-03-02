@@ -277,7 +277,7 @@ class AppErrorTest {
 
     @Test
     fun `getUserMessage - NetworkError with retryable true appends try again`() {
-        val error = AppError.NetworkError("Connection lost", isRetryable = true)
+        val error = AppError.NetworkError(message = "Connection lost", isRetryable = true)
 
         val message = error.getUserMessage()
 
@@ -287,7 +287,7 @@ class AppErrorTest {
 
     @Test
     fun `getUserMessage - NetworkError with retryable false does not append try again`() {
-        val error = AppError.NetworkError("Permanent failure", isRetryable = false)
+        val error = AppError.NetworkError(message = "Permanent failure", isRetryable = false)
 
         val message = error.getUserMessage()
 
@@ -306,7 +306,7 @@ class AppErrorTest {
 
     @Test
     fun `getUserMessage - ServerError with 500 code returns generic server message`() {
-        val error = AppError.ServerError(500, "Internal server error")
+        val error = AppError.ServerError(code = 500, message = "Internal server error")
 
         val message = error.getUserMessage()
 
@@ -316,7 +316,7 @@ class AppErrorTest {
 
     @Test
     fun `getUserMessage - ServerError with 502 code returns generic server message`() {
-        val error = AppError.ServerError(502, "Bad gateway")
+        val error = AppError.ServerError(code = 502, message = "Bad gateway")
 
         val message = error.getUserMessage()
 
@@ -325,7 +325,7 @@ class AppErrorTest {
 
     @Test
     fun `getUserMessage - ServerError with 599 code returns generic server message`() {
-        val error = AppError.ServerError(599, "Custom server error")
+        val error = AppError.ServerError(code = 599, message = "Custom server error")
 
         val message = error.getUserMessage()
 
@@ -334,7 +334,7 @@ class AppErrorTest {
 
     @Test
     fun `getUserMessage - ServerError with 400 code returns original message`() {
-        val error = AppError.ServerError(400, "Bad request")
+        val error = AppError.ServerError(code = 400, message = "Bad request")
 
         val message = error.getUserMessage()
 
@@ -343,7 +343,7 @@ class AppErrorTest {
 
     @Test
     fun `getUserMessage - ServerError with 404 code returns original message`() {
-        val error = AppError.ServerError(404, "Not found")
+        val error = AppError.ServerError(code = 404, message = "Not found")
 
         val message = error.getUserMessage()
 
@@ -352,7 +352,7 @@ class AppErrorTest {
 
     @Test
     fun `getUserMessage - ConflictError appends refresh message`() {
-        val error = AppError.ConflictError("Version mismatch")
+        val error = AppError.ConflictError(message = "Version mismatch")
 
         val message = error.getUserMessage()
 
@@ -362,7 +362,7 @@ class AppErrorTest {
 
     @Test
     fun `getUserMessage - AuthError appends sign in message`() {
-        val error = AppError.AuthError("Token expired")
+        val error = AppError.AuthError(message = "Token expired")
 
         val message = error.getUserMessage()
 
@@ -372,7 +372,7 @@ class AppErrorTest {
 
     @Test
     fun `getUserMessage - UnknownError returns generic message`() {
-        val error = AppError.UnknownError("Something bad happened", Exception())
+        val error = AppError.UnknownError(message = "Something bad happened", throwable = Exception())
 
         val message = error.getUserMessage()
 
@@ -383,70 +383,70 @@ class AppErrorTest {
 
     @Test
     fun `isRetryable - NetworkError with isRetryable true returns true`() {
-        val error = AppError.NetworkError("Error", isRetryable = true)
+        val error = AppError.NetworkError(message = "Error", isRetryable = true)
 
         assertTrue(error.isRetryable())
     }
 
     @Test
     fun `isRetryable - NetworkError with isRetryable false returns false`() {
-        val error = AppError.NetworkError("Error", isRetryable = false)
+        val error = AppError.NetworkError(message = "Error", isRetryable = false)
 
         assertFalse(error.isRetryable())
     }
 
     @Test
     fun `isRetryable - ServerError with 500 code returns true`() {
-        val error = AppError.ServerError(500, "Internal server error")
+        val error = AppError.ServerError(code = 500, message = "Internal server error")
 
         assertTrue(error.isRetryable())
     }
 
     @Test
     fun `isRetryable - ServerError with 502 code returns true`() {
-        val error = AppError.ServerError(502, "Bad gateway")
+        val error = AppError.ServerError(code = 502, message = "Bad gateway")
 
         assertTrue(error.isRetryable())
     }
 
     @Test
     fun `isRetryable - ServerError with 503 code returns true`() {
-        val error = AppError.ServerError(503, "Service unavailable")
+        val error = AppError.ServerError(code = 503, message = "Service unavailable")
 
         assertTrue(error.isRetryable())
     }
 
     @Test
     fun `isRetryable - ServerError with 599 code returns true`() {
-        val error = AppError.ServerError(599, "Custom error")
+        val error = AppError.ServerError(code = 599, message = "Custom error")
 
         assertTrue(error.isRetryable())
     }
 
     @Test
     fun `isRetryable - ServerError with 400 code returns false`() {
-        val error = AppError.ServerError(400, "Bad request")
+        val error = AppError.ServerError(code = 400, message = "Bad request")
 
         assertFalse(error.isRetryable())
     }
 
     @Test
     fun `isRetryable - ServerError with 404 code returns false`() {
-        val error = AppError.ServerError(404, "Not found")
+        val error = AppError.ServerError(code = 404, message = "Not found")
 
         assertFalse(error.isRetryable())
     }
 
     @Test
     fun `isRetryable - ServerError with 422 code returns false`() {
-        val error = AppError.ServerError(422, "Unprocessable entity")
+        val error = AppError.ServerError(code = 422, message = "Unprocessable entity")
 
         assertFalse(error.isRetryable())
     }
 
     @Test
     fun `isRetryable - ConflictError returns true`() {
-        val error = AppError.ConflictError("Conflict")
+        val error = AppError.ConflictError(message = "Conflict")
 
         assertTrue(error.isRetryable())
     }
@@ -460,14 +460,14 @@ class AppErrorTest {
 
     @Test
     fun `isRetryable - AuthError returns false`() {
-        val error = AppError.AuthError("Unauthorized")
+        val error = AppError.AuthError(message = "Unauthorized")
 
         assertFalse(error.isRetryable())
     }
 
     @Test
     fun `isRetryable - UnknownError returns false`() {
-        val error = AppError.UnknownError("Unknown", Exception())
+        val error = AppError.UnknownError(message = "Unknown", throwable = Exception())
 
         assertFalse(error.isRetryable())
     }
@@ -477,7 +477,7 @@ class AppErrorTest {
     @Test
     fun `NetworkError - can have custom throwable`() {
         val throwable = IOException("Custom exception")
-        val error = AppError.NetworkError("Network error", throwable = throwable)
+        val error = AppError.NetworkError(message = "Network error", throwable = throwable)
 
         assertEquals(throwable, error.throwable)
     }
@@ -485,7 +485,7 @@ class AppErrorTest {
     @Test
     fun `ValidationError - can have custom throwable`() {
         val throwable = Exception("Validation exception")
-        val error = AppError.ValidationError("field", "Invalid", throwable)
+        val error = AppError.ValidationError(field = "field", message = "Invalid", throwable = throwable)
 
         assertEquals(throwable, error.throwable)
     }
@@ -493,7 +493,7 @@ class AppErrorTest {
     @Test
     fun `ServerError - can have custom throwable`() {
         val throwable = Exception("Server exception")
-        val error = AppError.ServerError(500, "Error", throwable)
+        val error = AppError.ServerError(code = 500, message = "Error", throwable = throwable)
 
         assertEquals(throwable, error.throwable)
     }
@@ -501,7 +501,7 @@ class AppErrorTest {
     @Test
     fun `ConflictError - can have custom throwable`() {
         val throwable = Exception("Conflict exception")
-        val error = AppError.ConflictError("Conflict", throwable)
+        val error = AppError.ConflictError(message = "Conflict", throwable = throwable)
 
         assertEquals(throwable, error.throwable)
     }
@@ -509,7 +509,7 @@ class AppErrorTest {
     @Test
     fun `AuthError - can have custom throwable`() {
         val throwable = Exception("Auth exception")
-        val error = AppError.AuthError("Unauthorized", throwable)
+        val error = AppError.AuthError(message = "Unauthorized", throwable = throwable)
 
         assertEquals(throwable, error.throwable)
     }
