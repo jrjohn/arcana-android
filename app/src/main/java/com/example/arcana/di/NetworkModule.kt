@@ -24,7 +24,7 @@ import kotlinx.serialization.json.Json
 import timber.log.Timber
 import javax.inject.Singleton
 
-private const val API_KEY_HEADER = API_KEY_HEADER
+private const val API_KEY_HEADER = "x-api-key"
 
 @Module
 @InstallIn(SingletonComponent::class)

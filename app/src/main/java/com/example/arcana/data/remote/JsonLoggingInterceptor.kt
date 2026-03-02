@@ -42,7 +42,7 @@ class JsonLoggingConfig {
 private object LoggingConstants {
     const val TAG_REQUEST = "API Request"
     const val TAG_RESPONSE = "API Response"
-    const val SEPARATOR = LoggingConstants.SEPARATOR
+    const val SEPARATOR = "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 }
 
 val JsonLoggingInterceptor = createClientPlugin("JsonLoggingInterceptor", ::JsonLoggingConfig) {

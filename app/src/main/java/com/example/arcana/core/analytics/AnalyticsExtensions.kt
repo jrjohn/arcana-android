@@ -1,12 +1,12 @@
 package com.example.arcana.core.analytics
 
-private const val UNKNOWN_ERROR = UNKNOWN_ERROR
-
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import timber.log.Timber
+
+private const val UNKNOWN_ERROR = "Unknown error"
 
 /**
  * Extension functions for declarative analytics tracking
