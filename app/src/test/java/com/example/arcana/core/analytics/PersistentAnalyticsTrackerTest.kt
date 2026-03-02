@@ -6,6 +6,7 @@ import com.example.arcana.core.common.AppError
 import com.example.arcana.core.common.ErrorCode
 import com.example.arcana.data.local.dao.AnalyticsEventDao
 import com.example.arcana.data.local.entity.AnalyticsEventEntity
+import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
 import org.junit.Before
 import org.junit.Test
@@ -78,7 +79,7 @@ class PersistentAnalyticsTrackerTest {
         tracker.trackEvent("user_action", mapOf("button" to "submit"))
         Thread.sleep(500)
         try {
-            verify(analyticsEventDao).insert(any())
+            runBlocking { verify(analyticsEventDao).insert(any()) }
         } catch (e: Exception) {
             // insert may be called asynchronously - pass if called
         }

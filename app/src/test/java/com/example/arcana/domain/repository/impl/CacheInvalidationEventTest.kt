@@ -2,6 +2,9 @@ package com.example.arcana.domain.repository.impl
 
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.yield
 import org.junit.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -250,7 +253,7 @@ class CacheInvalidationEventTest {
         val received = mutableListOf<CacheInvalidationEvent>()
 
         // Subscribe to events
-        val job = kotlinx.coroutines.launch {
+        val job = launch {
             bus.events.collect { received.add(it) }
         }
 
@@ -259,7 +262,7 @@ class CacheInvalidationEventTest {
         bus.tryEmit(CacheInvalidationEvent.UserCreated(1))
 
         // Allow coroutine to process
-        kotlinx.coroutines.delay(100)
+        delay(100)
 
         job.cancel()
 
@@ -272,16 +275,16 @@ class CacheInvalidationEventTest {
         val bus = CacheEventBus()
         val received = mutableListOf<CacheInvalidationEvent>()
 
-        val job = kotlinx.coroutines.launch {
+        val job = launch {
             bus.events.collect { received.add(it) }
         }
 
         // Ensure collector is running before emit
-        kotlinx.coroutines.yield()
+        yield()
 
         bus.emit(CacheInvalidationEvent.InvalidateAll)
 
-        kotlinx.coroutines.delay(100)
+        delay(100)
         job.cancel()
 
         assertTrue(received.isNotEmpty() && received[0] is CacheInvalidationEvent.InvalidateAll ||

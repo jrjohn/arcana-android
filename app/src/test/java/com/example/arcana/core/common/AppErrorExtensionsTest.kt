@@ -237,9 +237,9 @@ class AppErrorExtensionsTest {
         val error = AppError.validation(
             "name",
             "Name too short",
-            ErrorCode.E2001_REQUIRED_FIELD
+            ErrorCode.E2003_REQUIRED_FIELD
         )
-        assertEquals(ErrorCode.E2001_REQUIRED_FIELD, error.errorCode)
+        assertEquals(ErrorCode.E2003_REQUIRED_FIELD, error.errorCode)
     }
 
     // ========== AppError.fromHttpCode() Tests ==========

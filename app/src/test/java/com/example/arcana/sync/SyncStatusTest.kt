@@ -118,7 +118,7 @@ class SyncStatusTest {
     }
 
     @Test
-    fun `syncing() hasPendingChanges is true when pendingChanges > 0`() {
+    fun `syncing() hasPendingChanges is true when pendingChanges is positive`() {
         val status = SyncStatus.syncing(3)
         assertTrue(status.hasPendingChanges)
     }
@@ -190,7 +190,7 @@ class SyncStatusTest {
     }
 
     @Test
-    fun `error() hasPendingChanges is true when pendingChanges > 0`() {
+    fun `error() hasPendingChanges is true when pendingChanges is positive`() {
         val status = SyncStatus.error("Error", 5)
         assertTrue(status.hasPendingChanges)
     }
