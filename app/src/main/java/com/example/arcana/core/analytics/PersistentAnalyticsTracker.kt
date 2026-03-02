@@ -38,23 +38,39 @@ class PersistentAnalyticsTracker @Inject constructor(
     private var currentScreen: String? = null
 
     private val deviceInfo by lazy {
-        DeviceInfo(
-            deviceId = getDeviceId(),
-            manufacturer = Build.MANUFACTURER,
-            model = Build.MODEL,
-            osVersion = "Android ${Build.VERSION.RELEASE}",
-            appVersion = BuildConfig.VERSION_NAME,
-            locale = Locale.getDefault().toString(),
-            timezone = TimeZone.getDefault().id
-        )
+        try {
+            DeviceInfo(
+                deviceId = getDeviceId(),
+                manufacturer = Build.MANUFACTURER ?: "unknown",
+                model = Build.MODEL ?: "unknown",
+                osVersion = "Android ${Build.VERSION.RELEASE ?: "unknown"}",
+                appVersion = try { BuildConfig.VERSION_NAME } catch (_: Exception) { "unknown" },
+                locale = Locale.getDefault().toString(),
+                timezone = TimeZone.getDefault().id
+            )
+        } catch (e: Exception) {
+            DeviceInfo(
+                deviceId = UUID.randomUUID().toString(),
+                manufacturer = "unknown",
+                model = "unknown",
+                osVersion = "unknown",
+                appVersion = "unknown",
+                locale = Locale.getDefault().toString(),
+                timezone = TimeZone.getDefault().id
+            )
+        }
     }
 
     private val appInfo by lazy {
-        AppInfo(
-            appVersion = BuildConfig.VERSION_NAME,
-            buildNumber = BuildConfig.VERSION_CODE.toString(),
-            isDebug = BuildConfig.DEBUG
-        )
+        try {
+            AppInfo(
+                appVersion = try { BuildConfig.VERSION_NAME } catch (_: Exception) { "unknown" },
+                buildNumber = try { BuildConfig.VERSION_CODE.toString() } catch (_: Exception) { "0" },
+                isDebug = try { BuildConfig.DEBUG } catch (_: Exception) { false }
+            )
+        } catch (e: Exception) {
+            AppInfo(appVersion = "unknown", buildNumber = "0", isDebug = false)
+        }
     }
 
     override fun trackEvent(event: String, params: Map<String, Any>) {

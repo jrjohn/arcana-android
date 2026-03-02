@@ -257,6 +257,9 @@ class CacheInvalidationEventTest {
             bus.events.collect { received.add(it) }
         }
 
+        // Allow collector coroutine to start subscribing before we emit
+        yield()
+
         // Emit via tryEmit
         bus.tryEmit(CacheInvalidationEvent.SyncCompleted)
         bus.tryEmit(CacheInvalidationEvent.UserCreated(1))

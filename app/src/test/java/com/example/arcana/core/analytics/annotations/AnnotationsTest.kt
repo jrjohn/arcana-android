@@ -6,18 +6,67 @@ import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 /**
- * Tests for analytics annotation classes via reflection
+ * Tests for analytics annotation classes via reflection.
+ *
+ * Note: Kotlin reflection on LOCAL functions (functions defined inside a method
+ * body) throws KotlinReflectionInternalError. All annotated helper functions
+ * must be declared at class scope so `::memberFun.annotations` works correctly.
  */
 class AnnotationsTest {
+
+    // ---- TrackAction helpers (class-level so reflection works) ----
+
+    @TrackAction("button_clicked")
+    private fun actionFunButtonClicked() {}
+
+    @TrackAction("some_event")
+    private fun actionFunSomeEvent() {}
+
+    @TrackAction("event", includeParams = false)
+    private fun actionFunNoParams() {}
+
+    @TrackAction("user_created")
+    private fun createUser() {}
+
+    @TrackAction("test")
+    private fun actionFunTest() {}
+
+    // ---- TrackError helpers ----
+
+    @TrackError
+    private fun trackErrorFunDefault() {}
+
+    @TrackError(source = "syncData")
+    private fun syncData() {}
+
+    @TrackError(trackSuccess = true)
+    private fun trackErrorFunSuccess() {}
+
+    @TrackError(source = "loadUsers", trackSuccess = true)
+    private fun loadUsers() {}
+
+    // ---- TrackPerformance helpers ----
+
+    @TrackPerformance("data_load")
+    private fun trackPerfFunDataLoad() {}
+
+    @TrackPerformance("some_event")
+    private fun trackPerfFunSomeEvent() {}
+
+    @TrackPerformance("api_call", threshold = 500L)
+    private fun makeApiCall() {}
+
+    @TrackPerformance("event", threshold = 0L)
+    private fun trackPerfFunZeroThreshold() {}
+
+    @TrackPerformance("heavy_op", threshold = 10000L)
+    private fun heavyOperation() {}
 
     // ========== TrackAction Tests ==========
 
     @Test
     fun `TrackAction annotation can be created with eventName`() {
-        @TrackAction("button_clicked")
-        fun dummyFun() {}
-
-        val annotation = ::dummyFun.annotations
+        val annotation = ::actionFunButtonClicked.annotations
             .filterIsInstance<TrackAction>()
             .firstOrNull()
 
@@ -27,10 +76,7 @@ class AnnotationsTest {
 
     @Test
     fun `TrackAction includeParams defaults to true`() {
-        @TrackAction("some_event")
-        fun dummyFun() {}
-
-        val annotation = ::dummyFun.annotations
+        val annotation = ::actionFunSomeEvent.annotations
             .filterIsInstance<TrackAction>()
             .firstOrNull()
 
@@ -40,10 +86,7 @@ class AnnotationsTest {
 
     @Test
     fun `TrackAction includeParams can be set to false`() {
-        @TrackAction("event", includeParams = false)
-        fun dummyFun() {}
-
-        val annotation = ::dummyFun.annotations
+        val annotation = ::actionFunNoParams.annotations
             .filterIsInstance<TrackAction>()
             .firstOrNull()
 
@@ -53,9 +96,6 @@ class AnnotationsTest {
 
     @Test
     fun `TrackAction stores event name correctly`() {
-        @TrackAction("user_created")
-        fun createUser() {}
-
         val annotation = ::createUser.annotations
             .filterIsInstance<TrackAction>()
             .firstOrNull()
@@ -66,14 +106,10 @@ class AnnotationsTest {
 
     @Test
     fun `TrackAction annotation is retained at runtime`() {
-        val retention = TrackAction::class.annotations
-            .filterIsInstance<Retention>()
+        val annotation = ::actionFunTest.annotations
+            .filterIsInstance<TrackAction>()
             .firstOrNull()
-
-        // Kotlin annotations with RUNTIME retention should be accessible
-        @TrackAction("test")
-        fun fn() {}
-        assertNotNull(::fn.annotations.filterIsInstance<TrackAction>().firstOrNull())
+        assertNotNull(annotation)
     }
 
     // ========== TrackScreen Tests ==========
@@ -130,8 +166,6 @@ class AnnotationsTest {
         assertEquals("user_list", annotation.screenName)
     }
 
-    // ========== TrackError Tests (if exists) ==========
-
     @Test
     fun `TrackAction annotation type is correct`() {
         val annotationType = TrackAction::class
@@ -156,10 +190,7 @@ class AnnotationsTest {
 
     @Test
     fun `TrackError source defaults to empty string`() {
-        @TrackError
-        fun dummyFun() {}
-
-        val annotation = ::dummyFun.annotations
+        val annotation = ::trackErrorFunDefault.annotations
             .filterIsInstance<TrackError>()
             .firstOrNull()
 
@@ -169,10 +200,7 @@ class AnnotationsTest {
 
     @Test
     fun `TrackError trackSuccess defaults to false`() {
-        @TrackError
-        fun dummyFun() {}
-
-        val annotation = ::dummyFun.annotations
+        val annotation = ::trackErrorFunDefault.annotations
             .filterIsInstance<TrackError>()
             .firstOrNull()
 
@@ -182,9 +210,6 @@ class AnnotationsTest {
 
     @Test
     fun `TrackError can set source`() {
-        @TrackError(source = "syncData")
-        fun syncData() {}
-
         val annotation = ::syncData.annotations
             .filterIsInstance<TrackError>()
             .firstOrNull()
@@ -195,10 +220,7 @@ class AnnotationsTest {
 
     @Test
     fun `TrackError can set trackSuccess to true`() {
-        @TrackError(trackSuccess = true)
-        fun dummyFun() {}
-
-        val annotation = ::dummyFun.annotations
+        val annotation = ::trackErrorFunSuccess.annotations
             .filterIsInstance<TrackError>()
             .firstOrNull()
 
@@ -208,9 +230,6 @@ class AnnotationsTest {
 
     @Test
     fun `TrackError with both source and trackSuccess`() {
-        @TrackError(source = "loadUsers", trackSuccess = true)
-        fun loadUsers() {}
-
         val annotation = ::loadUsers.annotations
             .filterIsInstance<TrackError>()
             .firstOrNull()
@@ -230,10 +249,7 @@ class AnnotationsTest {
 
     @Test
     fun `TrackPerformance eventName is stored correctly`() {
-        @TrackPerformance("data_load")
-        fun dummyFun() {}
-
-        val annotation = ::dummyFun.annotations
+        val annotation = ::trackPerfFunDataLoad.annotations
             .filterIsInstance<TrackPerformance>()
             .firstOrNull()
 
@@ -243,10 +259,7 @@ class AnnotationsTest {
 
     @Test
     fun `TrackPerformance threshold defaults to 0`() {
-        @TrackPerformance("some_event")
-        fun dummyFun() {}
-
-        val annotation = ::dummyFun.annotations
+        val annotation = ::trackPerfFunSomeEvent.annotations
             .filterIsInstance<TrackPerformance>()
             .firstOrNull()
 
@@ -256,9 +269,6 @@ class AnnotationsTest {
 
     @Test
     fun `TrackPerformance can set threshold`() {
-        @TrackPerformance("api_call", threshold = 500L)
-        fun makeApiCall() {}
-
         val annotation = ::makeApiCall.annotations
             .filterIsInstance<TrackPerformance>()
             .firstOrNull()
@@ -270,10 +280,7 @@ class AnnotationsTest {
 
     @Test
     fun `TrackPerformance with zero threshold`() {
-        @TrackPerformance("event", threshold = 0L)
-        fun dummyFun() {}
-
-        val annotation = ::dummyFun.annotations
+        val annotation = ::trackPerfFunZeroThreshold.annotations
             .filterIsInstance<TrackPerformance>()
             .firstOrNull()
 
@@ -283,9 +290,6 @@ class AnnotationsTest {
 
     @Test
     fun `TrackPerformance with large threshold`() {
-        @TrackPerformance("heavy_op", threshold = 10000L)
-        fun heavyOperation() {}
-
         val annotation = ::heavyOperation.annotations
             .filterIsInstance<TrackPerformance>()
             .firstOrNull()
