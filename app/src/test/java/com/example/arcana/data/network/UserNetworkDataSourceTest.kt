@@ -11,6 +11,7 @@ import org.mockito.kotlin.any
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
+import org.mockito.kotlin.doThrow
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
@@ -133,7 +134,7 @@ class UserNetworkDataSourceTest {
 
     @Test
     fun `getUsersPage - exception - propagates`() = runTest {
-        whenever(mockApiService.getUsersPage(any())).thenThrow(RuntimeException("timeout"))
+        doThrow(RuntimeException("timeout")).whenever(mockApiService).getUsersPage(any())
         var caught: Throwable? = null
         try { dataSource.getUsersPage(1) } catch (e: Exception) { caught = e }
         assertEquals("timeout", caught?.message)
