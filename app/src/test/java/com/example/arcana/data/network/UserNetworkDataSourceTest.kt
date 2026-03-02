@@ -134,7 +134,7 @@ class UserNetworkDataSourceTest {
 
     @Test
     fun `getUsersPage - exception - propagates`() = runTest {
-        doThrow(RuntimeException("timeout")).whenever(mockApiService).getUsersPage(any())
+        doThrow(RuntimeException("timeout")).whenever(mockApiService).getUsersPage(1)
         var caught: Throwable? = null
         try { dataSource.getUsersPage(1) } catch (e: Exception) { caught = e }
         assertEquals("timeout", caught?.message)
