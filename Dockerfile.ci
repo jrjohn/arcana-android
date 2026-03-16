@@ -22,9 +22,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 WORKDIR /project
 COPY . /project/
-RUN chmod +x gradlew
 
-# Pre-install Gemfile dependencies into the image (avoids runtime `bundle install` delay)
-RUN bundle install --gemfile=/project/Gemfile
+# Pre-install Gemfile dependencies into the image (avoids runtime bundle install delay)
+RUN chmod +x gradlew \
+    && bundle install --gemfile=/project/Gemfile
 
 CMD ["./gradlew", "assembleDebug", "--no-daemon"]
