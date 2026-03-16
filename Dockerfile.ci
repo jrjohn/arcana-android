@@ -9,7 +9,9 @@ ENV ANDROID_SDK_ROOT=${ANDROID_HOME}
 ENV PATH="${PATH}:${ANDROID_HOME}/cmdline-tools/latest/bin:${ANDROID_HOME}/platform-tools"
 
 # Install dependencies, Android SDK, accept licenses, set permissions
-RUN apt-get update && apt-get install -y --no-install-recommends curl unzip \
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl unzip ruby ruby-dev build-essential \
+    && gem install bundler --no-document \
     && rm -rf /var/lib/apt/lists/* \
     && mkdir -p ${ANDROID_HOME}/cmdline-tools \
     && cd ${ANDROID_HOME}/cmdline-tools \
