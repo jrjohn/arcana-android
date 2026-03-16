@@ -27,6 +27,19 @@ android {
         }
     }
 
+    // Release signing: reads from environment variables (CI) or falls back to debug key (local dev)
+    signingConfigs {
+        create("release") {
+            val keystoreFile = System.getenv("KEYSTORE_FILE")
+            if (keystoreFile != null) {
+                storeFile = file(keystoreFile)
+                storePassword = System.getenv("STORE_PASSWORD")
+                keyAlias = System.getenv("KEY_ALIAS")
+                keyPassword = System.getenv("KEY_PASSWORD")
+            }
+        }
+    }
+
     buildTypes {
         debug {
             enableUnitTestCoverage = true
@@ -43,6 +56,12 @@ android {
             buildConfigField("String", "API_BASE_URL", "\"https://reqres.in/api/\"")
             buildConfigField("String", "API_KEY", "\"reqres-free-v1\"")
             buildConfigField("Boolean", "ENABLE_LOGGING", "false")
+            // Use release signing if KEYSTORE_FILE env var is set; otherwise use debug key locally
+            signingConfig = if (System.getenv("KEYSTORE_FILE") != null) {
+                signingConfigs.getByName("release")
+            } else {
+                signingConfigs.getByName("debug")
+            }
         }
     }
     compileOptions {

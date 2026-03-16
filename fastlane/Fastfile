@@ -50,17 +50,12 @@ platform :android do
 
   desc "Build release AAB (for Play Store upload)"
   lane :bundle_release do
+    # Signing is configured in build.gradle.kts via KEYSTORE_FILE/KEY_ALIAS/KEY_PASSWORD/STORE_PASSWORD env vars
     gradle(
       task:       "bundle",
       build_type: "Release",
       flags:      "--no-daemon",
-      print_command: true,
-      properties: {
-        "android.injected.signing.store.file"     => ENV["KEYSTORE_FILE"],
-        "android.injected.signing.store.password" => ENV["STORE_PASSWORD"],
-        "android.injected.signing.key.alias"      => ENV["KEY_ALIAS"],
-        "android.injected.signing.key.password"   => ENV["KEY_PASSWORD"],
-      }
+      print_command: true
     )
     UI.success "AAB: #{lane_context[SharedValues::GRADLE_AAB_OUTPUT_PATH]}"
   end
@@ -72,16 +67,11 @@ platform :android do
     #   KEY_ALIAS       — key alias
     #   KEY_PASSWORD    — key password
     #   STORE_PASSWORD  — store password
+    # Signing is configured in build.gradle.kts via KEYSTORE_FILE/KEY_ALIAS/KEY_PASSWORD/STORE_PASSWORD env vars
     gradle(
       task:       "assembleRelease",
       flags:      "--no-daemon",
-      print_command: true,
-      properties: {
-        "android.injected.signing.store.file"     => ENV["KEYSTORE_FILE"],
-        "android.injected.signing.store.password" => ENV["STORE_PASSWORD"],
-        "android.injected.signing.key.alias"      => ENV["KEY_ALIAS"],
-        "android.injected.signing.key.password"   => ENV["KEY_PASSWORD"],
-      }
+      print_command: true
     )
     UI.success "Release APK: #{lane_context[SharedValues::GRADLE_APK_OUTPUT_PATH]}"
   end
