@@ -2,8 +2,7 @@
 # https://docs.fastlane.tools/actions/lane_context/
 
 # Application package name (Android app ID)
-# ⚠️  For Play Store release: change to a unique ID, e.g. "com.jrjohn.arcana"
-package_name("com.example.arcana")
+package_name("com.arcana.example")
 
 # Google Play Developer account JSON key (for supply / upload)
 # Uncomment when ready for Play Store automation:

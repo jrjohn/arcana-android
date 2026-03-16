@@ -15,7 +15,7 @@ android {
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.example.arcana"
+        applicationId = "com.arcana.example"
         minSdk = 28
         targetSdk = 36
         versionCode = 1

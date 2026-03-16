@@ -50,5 +50,5 @@ export STORE_PASSWORD=<store-password>
 
 ## Notes
 
-- Application ID: `com.example.arcana` (⚠️ must be changed before Play Store submission)
+- Application ID: `com.arcana.example`
 - Current Play Console: Jr. John (Account: 6685985085136085716), app status: Draft
