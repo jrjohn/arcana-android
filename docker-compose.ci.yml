@@ -39,7 +39,7 @@ services:
     volumes:
       - .:/project
       - gradle-cache:/root/.gradle
-    command: bash -c "bundle install --quiet && bundle exec fastlane ci"
+    command: bundle exec fastlane ci
 
   # fastlane bundle_release: signed release AAB for Play Store
   android-aab:
@@ -58,7 +58,7 @@ services:
       - KEY_ALIAS=${KEY_ALIAS}
       - KEY_PASSWORD=${KEY_PASSWORD}
       - STORE_PASSWORD=${STORE_PASSWORD}
-    command: bash -c "bundle install --quiet && bundle exec fastlane bundle_release"
+    command: bundle exec fastlane bundle_release
 
   # fastlane build_release: signed release APK (keystore injected by Jenkins)
   android-release:
@@ -77,7 +77,7 @@ services:
       - KEY_ALIAS=${KEY_ALIAS}
       - KEY_PASSWORD=${KEY_PASSWORD}
       - STORE_PASSWORD=${STORE_PASSWORD}
-    command: bash -c "bundle install --quiet && bundle exec fastlane build_release"
+    command: bundle exec fastlane build_release
 
 volumes:
   gradle-cache:
