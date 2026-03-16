@@ -48,6 +48,23 @@ platform :android do
     UI.success "Debug APK: #{lane_context[SharedValues::GRADLE_APK_OUTPUT_PATH]}"
   end
 
+  desc "Build release AAB (for Play Store upload)"
+  lane :bundle_release do
+    gradle(
+      task:       "bundle",
+      build_type: "Release",
+      flags:      "--no-daemon",
+      print_command: true,
+      properties: {
+        "android.injected.signing.store.file"     => ENV["KEYSTORE_FILE"],
+        "android.injected.signing.store.password" => ENV["STORE_PASSWORD"],
+        "android.injected.signing.key.alias"      => ENV["KEY_ALIAS"],
+        "android.injected.signing.key.password"   => ENV["KEY_PASSWORD"],
+      }
+    )
+    UI.success "AAB: #{lane_context[SharedValues::GRADLE_AAB_OUTPUT_PATH]}"
+  end
+
   desc "Build release APK (requires keystore env vars)"
   lane :build_release do
     # Expected env vars:
