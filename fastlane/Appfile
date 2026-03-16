@@ -1,0 +1,10 @@
+# Appfile — app-level fastlane metadata
+# https://docs.fastlane.tools/actions/lane_context/
+
+# Application package name (Android app ID)
+# ⚠️  For Play Store release: change to a unique ID, e.g. "com.jrjohn.arcana"
+package_name("com.example.arcana")
+
+# Google Play Developer account JSON key (for supply / upload)
+# Uncomment when ready for Play Store automation:
+# json_key_file("fastlane/google-play-key.json")

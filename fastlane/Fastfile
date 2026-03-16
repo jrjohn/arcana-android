@@ -1,0 +1,114 @@
+# Fastfile — Arcana Android CI/CD lanes
+# https://docs.fastlane.tools
+
+default_platform(:android)
+
+platform :android do
+
+  # ─────────────────────────────────────────────
+  # 🧪 Testing
+  # ─────────────────────────────────────────────
+
+  desc "Run all unit tests (with JaCoCo coverage)"
+  lane :test do
+    gradle(
+      task:       "testDebugUnitTest",
+      flags:      "--no-daemon --stacktrace",
+      print_command: true
+    )
+  end
+
+  desc "Run lint checks"
+  lane :lint do
+    gradle(
+      task:       "lintDebug",
+      flags:      "--no-daemon",
+      print_command: true
+    )
+  end
+
+  desc "Run tests + lint in one pass (for CI)"
+  lane :ci do
+    lint
+    test
+    UI.success "✅ CI checks passed — lint + unit tests OK"
+  end
+
+  # ─────────────────────────────────────────────
+  # 🔨 Build
+  # ─────────────────────────────────────────────
+
+  desc "Build debug APK"
+  lane :build_debug do
+    gradle(
+      task:       "assembleDebug",
+      flags:      "--no-daemon",
+      print_command: true
+    )
+    UI.success "Debug APK: #{lane_context[SharedValues::GRADLE_APK_OUTPUT_PATH]}"
+  end
+
+  desc "Build release APK (requires keystore env vars)"
+  lane :build_release do
+    # Expected env vars:
+    #   KEYSTORE_FILE   — path to .jks / .keystore
+    #   KEY_ALIAS       — key alias
+    #   KEY_PASSWORD    — key password
+    #   STORE_PASSWORD  — store password
+    gradle(
+      task:       "assembleRelease",
+      flags:      "--no-daemon",
+      print_command: true,
+      properties: {
+        "android.injected.signing.store.file"     => ENV["KEYSTORE_FILE"],
+        "android.injected.signing.store.password" => ENV["STORE_PASSWORD"],
+        "android.injected.signing.key.alias"      => ENV["KEY_ALIAS"],
+        "android.injected.signing.key.password"   => ENV["KEY_PASSWORD"],
+      }
+    )
+    UI.success "Release APK: #{lane_context[SharedValues::GRADLE_APK_OUTPUT_PATH]}"
+  end
+
+  # ─────────────────────────────────────────────
+  # 🚀 Distribution (Play Store)
+  # ─────────────────────────────────────────────
+
+  desc "Upload release APK to Play Store internal track"
+  lane :deploy_internal do
+    build_release
+    upload_to_play_store(
+      track:          "internal",
+      apk:            lane_context[SharedValues::GRADLE_APK_OUTPUT_PATH],
+      release_status: "draft"
+    )
+  end
+
+  desc "Promote internal → beta"
+  lane :promote_to_beta do
+    upload_to_play_store(
+      track:                  "internal",
+      track_promote_to:       "beta",
+      skip_upload_apk:        true,
+      skip_upload_metadata:   true,
+      skip_upload_screenshots: true,
+      skip_upload_images:     true
+    )
+  end
+
+  # ─────────────────────────────────────────────
+  # 🛠️  Utilities
+  # ─────────────────────────────────────────────
+
+  desc "Clean build outputs"
+  lane :clean do
+    gradle(task: "clean", flags: "--no-daemon")
+  end
+
+  # ─────────────────────────────────────────────
+  # Error handling
+  # ─────────────────────────────────────────────
+  error do |lane, exception|
+    UI.error "Lane '#{lane}' failed: #{exception.message}"
+  end
+
+end

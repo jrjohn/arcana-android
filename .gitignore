@@ -3,3 +3,11 @@
 .DS_Store
 /buildSrc/build
 /buildSrc/.gradle
+
+# Fastlane
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots
+fastlane/test_output
+fastlane/google-play-key.json
+Gemfile.lock
