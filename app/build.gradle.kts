@@ -48,7 +48,8 @@ android {
             buildConfigField("Boolean", "ENABLE_LOGGING", "true")
         }
         release {
-            isMinifyEnabled = false // NOSONAR kotlin:S7204
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
