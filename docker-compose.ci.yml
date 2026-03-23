@@ -13,11 +13,6 @@ services:
     command: ./gradlew assembleDebug --no-daemon
 
   android-test:
-    build:
-      context: .
-      dockerfile: Dockerfile.ci
-      platforms:
-        - linux/amd64
     image: localhost:5000/arcana/android-app:${VERSION:-1.0.0}
     platform: linux/amd64
     volumes:
@@ -29,11 +24,6 @@ services:
 
   # fastlane ci: lint + unit tests via fastlane
   android-fastlane:
-    build:
-      context: .
-      dockerfile: Dockerfile.ci
-      platforms:
-        - linux/amd64
     image: localhost:5000/arcana/android-app:${VERSION:-1.0.0}
     platform: linux/amd64
     volumes:
@@ -43,11 +33,6 @@ services:
 
   # fastlane bundle_release: signed release AAB for Play Store
   android-aab:
-    build:
-      context: .
-      dockerfile: Dockerfile.ci
-      platforms:
-        - linux/amd64
     image: localhost:5000/arcana/android-app:${VERSION:-1.0.0}
     platform: linux/amd64
     volumes:
@@ -62,11 +47,6 @@ services:
 
   # fastlane build_release: signed release APK (keystore injected by Jenkins)
   android-release:
-    build:
-      context: .
-      dockerfile: Dockerfile.ci
-      platforms:
-        - linux/amd64
     image: localhost:5000/arcana/android-app:${VERSION:-1.0.0}
     platform: linux/amd64
     volumes:

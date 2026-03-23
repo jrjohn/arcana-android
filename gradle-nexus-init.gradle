@@ -1,0 +1,32 @@
+// Nexus proxy init script — injected during Docker build
+def nexusUrl = System.getenv("NEXUS_URL")
+if (nexusUrl) {
+    allprojects {
+        buildscript {
+            repositories {
+                maven {
+                    url "${nexusUrl}/google-maven-proxy/"
+                    allowInsecureProtocol = true
+                }
+                maven {
+                    url "${nexusUrl}/maven-central-proxy/"
+                    allowInsecureProtocol = true
+                }
+                maven {
+                    url "${nexusUrl}/gradle-plugins-proxy/"
+                    allowInsecureProtocol = true
+                }
+            }
+        }
+        repositories {
+            maven {
+                url "${nexusUrl}/google-maven-proxy/"
+                allowInsecureProtocol = true
+            }
+            maven {
+                url "${nexusUrl}/maven-central-proxy/"
+                allowInsecureProtocol = true
+            }
+        }
+    }
+}

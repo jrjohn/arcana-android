@@ -3,10 +3,16 @@
 # AGP 8.13.1 / Gradle 8.13 / SDK 36
 # ============================================
 FROM eclipse-temurin:21-jdk
+ARG NEXUS_URL=http://172.17.0.1:8081/nexus/repository
 
 ENV ANDROID_HOME=/opt/android-sdk
 ENV ANDROID_SDK_ROOT=${ANDROID_HOME}
 ENV PATH="${PATH}:${ANDROID_HOME}/cmdline-tools/latest/bin:${ANDROID_HOME}/platform-tools"
+ENV NEXUS_URL=${NEXUS_URL}
+
+# Configure APT to use Nexus proxy (amd64 uses archive.ubuntu.com)
+RUN sed -i "s|http://archive.ubuntu.com/ubuntu|${NEXUS_URL}/ubuntu-archive-proxy|g; s|http://security.ubuntu.com/ubuntu|${NEXUS_URL}/ubuntu-security-proxy|g" /etc/apt/sources.list.d/*.sources 2>/dev/null; \
+    sed -i "s|http://archive.ubuntu.com/ubuntu|${NEXUS_URL}/ubuntu-archive-proxy|g; s|http://security.ubuntu.com/ubuntu|${NEXUS_URL}/ubuntu-security-proxy|g" /etc/apt/sources.list 2>/dev/null || true
 
 # Install dependencies, Android SDK, accept licenses, set permissions
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -19,6 +25,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && unzip cmdline-tools.zip && mv cmdline-tools latest && rm cmdline-tools.zip \
     && yes | sdkmanager --licenses > /dev/null 2>&1 \
     && sdkmanager "platforms;android-36" "build-tools;36.0.0" "platform-tools"
+
+RUN mkdir -p /root/.gradle/init.d
+COPY gradle-nexus-init.gradle /root/.gradle/init.d/nexus.gradle
 
 WORKDIR /project
 COPY . /project/
