@@ -10,12 +10,16 @@ ENV ANDROID_SDK_ROOT=${ANDROID_HOME}
 ENV PATH="${PATH}:${ANDROID_HOME}/cmdline-tools/latest/bin:${ANDROID_HOME}/platform-tools"
 ENV NEXUS_URL=${NEXUS_URL}
 
-# Configure APT to use Nexus proxy (amd64 uses archive.ubuntu.com)
-RUN sed -i "s|http://archive.ubuntu.com/ubuntu|${NEXUS_URL}/ubuntu-archive-proxy|g; s|http://security.ubuntu.com/ubuntu|${NEXUS_URL}/ubuntu-security-proxy|g" /etc/apt/sources.list.d/*.sources 2>/dev/null; \
-    sed -i "s|http://archive.ubuntu.com/ubuntu|${NEXUS_URL}/ubuntu-archive-proxy|g; s|http://security.ubuntu.com/ubuntu|${NEXUS_URL}/ubuntu-security-proxy|g" /etc/apt/sources.list 2>/dev/null || true
-
-# Install dependencies, Android SDK, accept licenses, set permissions
-RUN apt-get update && apt-get install -y --no-install-recommends \
+# Configure APT proxy + install dependencies, Android SDK
+RUN sed -i \
+      "s|http://archive.ubuntu.com/ubuntu|${NEXUS_URL}/ubuntu-archive-proxy|g; \
+       s|http://security.ubuntu.com/ubuntu|${NEXUS_URL}/ubuntu-security-proxy|g" \
+      /etc/apt/sources.list.d/*.sources 2>/dev/null; \
+    sed -i \
+      "s|http://archive.ubuntu.com/ubuntu|${NEXUS_URL}/ubuntu-archive-proxy|g; \
+       s|http://security.ubuntu.com/ubuntu|${NEXUS_URL}/ubuntu-security-proxy|g" \
+      /etc/apt/sources.list 2>/dev/null || true \
+    && apt-get update && apt-get install -y --no-install-recommends \
     curl unzip ruby ruby-dev build-essential \
     && gem install bundler --no-document \
     && rm -rf /var/lib/apt/lists/* \
