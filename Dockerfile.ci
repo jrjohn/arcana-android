@@ -28,9 +28,8 @@ RUN sed -i \
     && curl -fsSL https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip -o cmdline-tools.zip \
     && unzip cmdline-tools.zip && mv cmdline-tools latest && rm cmdline-tools.zip \
     && yes | sdkmanager --licenses > /dev/null 2>&1 \
-    && sdkmanager "platforms;android-36" "build-tools;36.0.0" "platform-tools"
-
-RUN mkdir -p /root/.gradle/init.d
+    && sdkmanager "platforms;android-36" "build-tools;36.0.0" "platform-tools" \
+    && mkdir -p /root/.gradle/init.d
 COPY gradle-nexus-init.gradle /root/.gradle/init.d/nexus.gradle
 
 WORKDIR /project
