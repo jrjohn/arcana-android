@@ -24,7 +24,7 @@ import java.util.UUID
 import javax.inject.Inject
 import javax.inject.Singleton
 
-private const val DEFAULT_JOB = DEFAULT_JOB
+private const val DEFAULT_JOB = "Developer"
 
 @Singleton
 class OfflineFirstDataRepository @Inject constructor(
