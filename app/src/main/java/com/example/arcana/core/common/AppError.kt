@@ -70,11 +70,13 @@ sealed class AppError {
      */
     data class UnknownError(
         override val errorCode: ErrorCode = ErrorCode.E9000_UNKNOWN,
-        override val message: String = "An unexpected error occurred",
+        override val message: String = DEFAULT_ERROR_MESSAGE,
         override val throwable: Throwable
     ) : AppError()
 
     companion object {
+        private const val DEFAULT_ERROR_MESSAGE = "An unexpected error occurred"
+
         /**
          * Converts a generic exception into a specific AppError type
          */
@@ -100,7 +102,7 @@ sealed class AppError {
                 )
                 else -> UnknownError(
                     errorCode = ErrorCode.E9000_UNKNOWN,
-                    message = exception.message ?: "An unexpected error occurred",
+                    message = exception.message ?: DEFAULT_ERROR_MESSAGE,
                     throwable = exception
                 )
             }

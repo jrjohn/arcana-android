@@ -283,11 +283,10 @@ class CachingDataRepository @Inject constructor(
         // This ensures cache coherency even if sync partially succeeded
         if (success) {
             Timber.d("CachingDataRepository: Sync succeeded, invalidating all caches")
-            invalidateAllCaches()
         } else {
             Timber.w("CachingDataRepository: Sync failed, but invalidating caches anyway for safety")
-            invalidateAllCaches()
         }
+        invalidateAllCaches()
 
         return success
     }

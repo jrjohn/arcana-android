@@ -42,7 +42,6 @@ import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -58,6 +57,10 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.example.arcana.data.model.User
 import timber.log.Timber
+
+private const val PLACEHOLDER_AVATAR_URL = "https://via.placeholder.com/150"
+private const val INFINITE_SCROLL_DELAY_MS = 1000L
+private const val LOAD_MORE_THRESHOLD = 3
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -86,7 +89,7 @@ fun UserScreen( // NOSONAR kotlin:S3776
 
     // Delay infinite scroll to prevent immediate triggering on first load
     LaunchedEffect(Unit) {
-        kotlinx.coroutines.delay(1000) // Wait 1 second before enabling infinite scroll
+        kotlinx.coroutines.delay(INFINITE_SCROLL_DELAY_MS)
         enableInfiniteScroll = true
     }
 
@@ -190,7 +193,7 @@ fun UserScreen( // NOSONAR kotlin:S3776
                         val totalItemsCount = layoutInfo.totalItemsCount
                         Pair(lastVisibleItemIndex, totalItemsCount)
                     }.collect { (lastVisibleItemIndex, totalItemsCount) ->
-                        val shouldLoadMore = lastVisibleItemIndex >= totalItemsCount - 3 && totalItemsCount > 0
+                        val shouldLoadMore = lastVisibleItemIndex >= totalItemsCount - LOAD_MORE_THRESHOLD && totalItemsCount > 0
                         if (enableInfiniteScroll && shouldLoadMore && !uiState.isLoadingMore && uiState.currentPage < uiState.totalPages) {
                             Timber.d("Triggering loadNextPage - lastVisible: $lastVisibleItemIndex, total: $totalItemsCount, page: ${uiState.currentPage}/${uiState.totalPages}")
                             viewModel.onEvent(UserViewModel.Input.LoadNextPage)
@@ -269,7 +272,7 @@ fun UserCard(
         ) {
             // Avatar
             AsyncImage(
-                model = user.avatar.ifEmpty { "https://via.placeholder.com/150" },
+                model = user.avatar.ifEmpty { PLACEHOLDER_AVATAR_URL },
                 contentDescription = "User avatar",
                 modifier = Modifier
                     .size(64.dp)

@@ -225,7 +225,7 @@ class AnalyticsEventDataClassTest {
 
     @Test
     fun `AnalyticsEvent with all EventTypes`() {
-        EventType.values().forEach { type ->
+        EventType.entries.toTypedArray().forEach { type ->
             val event = makeAnalyticsEvent(eventType = type)
             assertEquals(type, event.eventType)
         }
@@ -265,7 +265,7 @@ class AnalyticsEventDataClassTest {
 
     @Test
     fun `EventType total count is 6`() {
-        assertEquals(6, EventType.values().size)
+        assertEquals(6, EventType.entries.toTypedArray().size)
     }
 
     @Test
@@ -285,7 +285,7 @@ class AnalyticsEventDataClassTest {
 
     @Test
     fun `EventType ordinals are sequential`() {
-        val values = EventType.values()
+        val values = EventType.entries.toTypedArray()
         for (i in values.indices) {
             assertEquals(i, values[i].ordinal)
         }

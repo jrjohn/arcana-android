@@ -146,4 +146,8 @@ object Params {
     const val NETWORK_TYPE = "network_type"
     const val SYNC_TYPE = "sync_type"
     const val TIMESTAMP = "timestamp"
+    const val FIELD = "field"
+    const val THROWABLE_CLASS = "throwable_class"
+    const val THROWABLE_MESSAGE = "throwable_message"
+    const val STACK_TRACE_TOP = "stack_trace_top"
 }

@@ -60,7 +60,7 @@ class AnalyticsUploadWorker @AssistedInject constructor(
             }
 
             // Get device ID from first event
-            val deviceId = events.firstOrNull()?.deviceInfo?.deviceId ?: "unknown"
+            val deviceId = events.firstOrNull()?.deviceInfo?.deviceId ?: UNKNOWN_DEVICE_ID
 
             // Upload events in batch
             val request = BatchUploadRequest(
@@ -90,8 +90,8 @@ class AnalyticsUploadWorker @AssistedInject constructor(
                     Timber.w("⚠️ Failed to upload ${response.failedEventIds.size} events")
                 }
 
-                // Clean up old uploaded events (older than 7 days)
-                val sevenDaysAgo = System.currentTimeMillis() - TimeUnit.DAYS.toMillis(7)
+                // Clean up old uploaded events
+                val sevenDaysAgo = System.currentTimeMillis() - TimeUnit.DAYS.toMillis(EVENT_RETENTION_DAYS)
                 val deletedCount = analyticsEventDao.deleteOldUploadedEvents(sevenDaysAgo)
                 if (deletedCount > 0) {
                     Timber.d("🗑️ Cleaned up $deletedCount old uploaded events")
@@ -125,5 +125,7 @@ class AnalyticsUploadWorker @AssistedInject constructor(
         const val WORK_NAME = "analytics_upload_worker"
         const val BATCH_SIZE = 100
         const val MAX_RETRY_ATTEMPTS = 5
+        private const val EVENT_RETENTION_DAYS = 7L
+        private const val UNKNOWN_DEVICE_ID = "unknown"
     }
 }

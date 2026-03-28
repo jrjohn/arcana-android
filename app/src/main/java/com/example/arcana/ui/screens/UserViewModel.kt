@@ -255,6 +255,7 @@ class UserViewModel @Inject constructor(
                     userService.createUser(user)
                 }
             } catch (e: Exception) {
+                Timber.e(e, "Failed to create user")
                 false
             }
 
@@ -297,6 +298,7 @@ class UserViewModel @Inject constructor(
                     userService.updateUser(user)
                 }
             } catch (e: Exception) {
+                Timber.e(e, "Failed to update user ${user.id}")
                 false
             }
 
@@ -338,6 +340,7 @@ class UserViewModel @Inject constructor(
                     userService.deleteUser(user.id)
                 }
             } catch (e: Exception) {
+                Timber.e(e, "Failed to delete user ${user.id}")
                 false
             }
 

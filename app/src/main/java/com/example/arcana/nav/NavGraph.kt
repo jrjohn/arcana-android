@@ -14,6 +14,18 @@ import com.example.arcana.ui.screens.UserDetailScreen
 import com.example.arcana.ui.screens.UserScreen
 
 /**
+ * Navigation route constants
+ */
+private object Routes {
+    const val HOME = "home"
+    const val USER_CRUD = "user_crud"
+    const val USER_DETAIL = "user_detail/{userId}"
+    const val USER_DETAIL_PREFIX = "user_detail/"
+
+    fun userDetail(userId: Int): String = "user_detail/$userId"
+}
+
+/**
  * Main navigation graph with automatic analytics tracking
  *
  * Note: Screen views are automatically tracked via:
@@ -34,28 +46,28 @@ fun NavGraph(
         analyticsTracker = analyticsTracker,
         routeToScreenNameMapper = { route ->
             when {
-                route == "home" -> AnalyticsScreens.HOME
-                route == "user_crud" -> AnalyticsScreens.USER_CRUD
-                route.startsWith("user_detail/") -> "user_detail"
+                route == Routes.HOME -> AnalyticsScreens.HOME
+                route == Routes.USER_CRUD -> AnalyticsScreens.USER_CRUD
+                route.startsWith(Routes.USER_DETAIL_PREFIX) -> AnalyticsScreens.USER_DETAIL
                 else -> route
             }
         }
     )
 
-    NavHost(navController = navController, startDestination = "home") {
-        composable("home") {
-            HomeScreen(onNavigateToUserCrud = { navController.navigate("user_crud") })
+    NavHost(navController = navController, startDestination = Routes.HOME) {
+        composable(Routes.HOME) {
+            HomeScreen(onNavigateToUserCrud = { navController.navigate(Routes.USER_CRUD) })
         }
-        composable("user_crud") {
+        composable(Routes.USER_CRUD) {
             UserScreen(
                 onNavigateBack = { navController.popBackStack() },
                 onNavigateToUserDetail = { userId ->
-                    navController.navigate("user_detail/$userId")
+                    navController.navigate(Routes.userDetail(userId))
                 }
             )
         }
         composable(
-            route = "user_detail/{userId}",
+            route = Routes.USER_DETAIL,
             arguments = listOf(navArgument("userId") { type = NavType.IntType })
         ) {
             UserDetailScreen(

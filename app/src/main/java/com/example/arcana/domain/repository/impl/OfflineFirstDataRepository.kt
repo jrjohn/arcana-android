@@ -24,6 +24,8 @@ import java.util.UUID
 import javax.inject.Inject
 import javax.inject.Singleton
 
+private const val DEFAULT_JOB = DEFAULT_JOB
+
 @Singleton
 class OfflineFirstDataRepository @Inject constructor(
     private val userDao: UserDao,
@@ -32,6 +34,10 @@ class OfflineFirstDataRepository @Inject constructor(
     private val networkMonitor: NetworkMonitor,
     private val cacheEventBus: CacheEventBus
 ) : DataRepository, Syncable {
+
+    companion object {
+        private const val PAGE_SIZE = 6
+    }
 
     // ============================================
     // Shared StateFlow Cache (Optimization #1)
@@ -105,8 +111,7 @@ class OfflineFirstDataRepository @Inject constructor(
                 val allLocalUsers = userDao.getUsers().first()
 
                 // Calculate pagination from local data
-                val pageSize = 6 // Match API page size
-                val totalPages = (allLocalUsers.size + pageSize - 1) / pageSize // Ceiling division
+                val totalPages = (allLocalUsers.size + PAGE_SIZE - 1) / PAGE_SIZE // Ceiling division
 
                 if (page < 1 || (allLocalUsers.isNotEmpty() && page > totalPages)) {
                     Timber.w("Invalid page $page requested (total pages: $totalPages)")
@@ -114,8 +119,8 @@ class OfflineFirstDataRepository @Inject constructor(
                 }
 
                 // Get users for requested page
-                val startIndex = (page - 1) * pageSize
-                val endIndex = minOf(startIndex + pageSize, allLocalUsers.size)
+                val startIndex = (page - 1) * PAGE_SIZE
+                val endIndex = minOf(startIndex + PAGE_SIZE, allLocalUsers.size)
                 val pageUsers = if (startIndex < allLocalUsers.size) {
                     allLocalUsers.subList(startIndex, endIndex)
                 } else {
@@ -220,7 +225,7 @@ class OfflineFirstDataRepository @Inject constructor(
                         try {
                             networkDataSource.updateUser(
                                 localUser.id,
-                                CreateUserRequest(localUser.name, "Developer")
+                                CreateUserRequest(localUser.name, DEFAULT_JOB)
                             )
                             conflictsResolved++
                             Timber.d("ConflictResolution: Successfully pushed local user $id to network")
@@ -301,7 +306,7 @@ class OfflineFirstDataRepository @Inject constructor(
     override suspend fun createUser(user: User): Boolean {
         if (networkMonitor.isOnline.first()) { // NOSONAR kotlin:S6510
             return try {
-                networkDataSource.createUser(CreateUserRequest(user.name, "Developer"))
+                networkDataSource.createUser(CreateUserRequest(user.name, DEFAULT_JOB))
                 sync()
                 // Emit cache invalidation event (sync already emits SyncCompleted, but emit UserCreated for clarity)
                 cacheEventBus.emit(CacheInvalidationEvent.InvalidateAll)
@@ -333,7 +338,7 @@ class OfflineFirstDataRepository @Inject constructor(
         // Step 2: Sync with network in background
         if (networkMonitor.isOnline.first()) {
             try {
-                networkDataSource.updateUser(user.id, CreateUserRequest(user.name, "Developer"))
+                networkDataSource.updateUser(user.id, CreateUserRequest(user.name, DEFAULT_JOB))
                 Timber.d("Optimistic update: Network sync successful for user ${user.id}")
                 // Sync again to get any server-side changes
                 sync()
@@ -380,7 +385,7 @@ class OfflineFirstDataRepository @Inject constructor(
                 userId = tempId,
                 type = ChangeType.CREATE,
                 name = user.name,
-                job = "Developer"
+                job = DEFAULT_JOB
             )
         )
     }
@@ -392,7 +397,7 @@ class OfflineFirstDataRepository @Inject constructor(
                 userId = user.id,
                 type = ChangeType.UPDATE,
                 name = user.name,
-                job = "Developer"
+                job = DEFAULT_JOB
             )
         )
     }

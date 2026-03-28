@@ -21,7 +21,10 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
+
+private const val SYNC_FAILED_MESSAGE = "Sync failed"
 
 @HiltViewModel
 @TrackScreen(AnalyticsScreens.HOME)
@@ -122,12 +125,13 @@ class HomeViewModel @Inject constructor(
                     userService.syncUsers()
                 }
             } catch (error: Exception) {
-                _effect.send(Effect.ShowSnackbar("Sync failed"))
+                Timber.e(error, "Sync failed")
+                _effect.send(Effect.ShowSnackbar(SYNC_FAILED_MESSAGE))
                 false
             }
 
             if (!syncSuccessful) {
-                _effect.send(Effect.ShowSnackbar("Sync failed"))
+                _effect.send(Effect.ShowSnackbar(SYNC_FAILED_MESSAGE))
             }
 
             // Fetch total user count from API

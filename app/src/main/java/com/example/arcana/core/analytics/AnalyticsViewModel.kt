@@ -24,6 +24,10 @@ abstract class AnalyticsViewModel(
     protected val analyticsTracker: AnalyticsTracker
 ) : ViewModel() {
 
+    companion object {
+        private const val UNKNOWN_ERROR = "Unknown error"
+    }
+
     init {
         // Automatically track screen view if annotated
         trackScreenViewIfAnnotated()
@@ -152,12 +156,12 @@ abstract class AnalyticsViewModel(
                 params + mapOf(
                     Params.DURATION_MS to duration.toString(),
                     Params.SUCCESS to "false",
-                    Params.ERROR_MESSAGE to (e.message ?: "Unknown error")
+                    Params.ERROR_MESSAGE to (e.message ?: UNKNOWN_ERROR)
                 )
             } else {
                 params + mapOf(
                     Params.SUCCESS to "false",
-                    Params.ERROR_MESSAGE to (e.message ?: "Unknown error")
+                    Params.ERROR_MESSAGE to (e.message ?: UNKNOWN_ERROR)
                 )
             }
 

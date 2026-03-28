@@ -14,6 +14,24 @@ class UserValidator @Inject constructor(
     private val stringProvider: StringProvider
 ) {
 
+    companion object {
+        private const val MAX_NAME_LENGTH = 100
+
+        /**
+         * Quick validation for email only
+         */
+        fun validateEmail(email: String): Result<String> {
+            return EmailAddress.create(email).map { it.value }
+        }
+
+        /**
+         * Checks if a name is valid (not empty, reasonable length)
+         */
+        fun isValidName(name: String): Boolean {
+            return name.isNotBlank() && name.length <= MAX_NAME_LENGTH
+        }
+    }
+
     /**
      * Validates a User object
      *
@@ -34,11 +52,11 @@ class UserValidator @Inject constructor(
         }
 
         // Validate name length
-        if (user.firstName.length > 100) {
+        if (user.firstName.length > MAX_NAME_LENGTH) {
             errors.add(AppError.validation("firstName", stringProvider.getString(R.string.error_first_name_too_long)))
         }
 
-        if (user.lastName.length > 100) {
+        if (user.lastName.length > MAX_NAME_LENGTH) {
             errors.add(AppError.validation("lastName", stringProvider.getString(R.string.error_last_name_too_long)))
         }
 
@@ -90,26 +108,6 @@ class UserValidator @Inject constructor(
     }
 
     private fun isValidUrl(url: String): Boolean {
-        return try {
-            url.startsWith("http://") || url.startsWith("https://")
-        } catch (e: Exception) {
-            false
-        }
-    }
-
-    companion object {
-        /**
-         * Quick validation for email only
-         */
-        fun validateEmail(email: String): Result<String> {
-            return EmailAddress.create(email).map { it.value }
-        }
-
-        /**
-         * Checks if a name is valid (not empty, reasonable length)
-         */
-        fun isValidName(name: String): Boolean {
-            return name.isNotBlank() && name.length <= 100
-        }
+        return url.startsWith("http://") || url.startsWith("https://")
     }
 }

@@ -3,6 +3,7 @@ package com.example.arcana.ui.screens
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.example.arcana.R
+import com.example.arcana.core.analytics.AnalyticsScreens
 import com.example.arcana.core.analytics.AnalyticsTracker
 import com.example.arcana.core.analytics.AnalyticsViewModel
 import com.example.arcana.core.analytics.CrudOperation
@@ -97,7 +98,7 @@ class UserDetailViewModel @Inject constructor(
 
             // Track user update clicked
             trackEvent(Events.USER_UPDATE_CLICKED, mapOf(
-                Params.SCREEN_NAME to "user_detail",
+                Params.SCREEN_NAME to AnalyticsScreens.USER_DETAIL,
                 Params.USER_ID to user.id.toString()
             ))
 
@@ -111,13 +112,14 @@ class UserDetailViewModel @Inject constructor(
                         Params.USER_ID to user.id.toString(),
                         Params.USER_NAME to user.name,
                         Params.USER_EMAIL to user.email,
-                        Params.SCREEN_NAME to "user_detail"
+                        Params.SCREEN_NAME to AnalyticsScreens.USER_DETAIL
                     )
                 ) {
                     // updateUser now uses optimistic pattern - UI updates instantly!
                     userService.updateUser(user)
                 }
             } catch (e: Exception) {
+                Timber.e(e, "Failed to update user ${user.id}")
                 false
             }
 
@@ -140,7 +142,7 @@ class UserDetailViewModel @Inject constructor(
 
             // Track user delete clicked
             trackEvent(Events.USER_DELETE_CLICKED, mapOf(
-                Params.SCREEN_NAME to "user_detail",
+                Params.SCREEN_NAME to AnalyticsScreens.USER_DETAIL,
                 Params.USER_ID to user.id.toString()
             ))
 
@@ -153,13 +155,14 @@ class UserDetailViewModel @Inject constructor(
                     params = mapOf(
                         Params.USER_ID to user.id.toString(),
                         Params.USER_NAME to user.name,
-                        Params.SCREEN_NAME to "user_detail"
+                        Params.SCREEN_NAME to AnalyticsScreens.USER_DETAIL
                     )
                 ) {
                     // deleteUser now uses optimistic pattern - user disappears instantly!
                     userService.deleteUser(user.id)
                 }
             } catch (e: Exception) {
+                Timber.e(e, "Failed to delete user ${user.id}")
                 false
             }
 

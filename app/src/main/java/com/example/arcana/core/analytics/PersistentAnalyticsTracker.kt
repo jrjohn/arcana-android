@@ -26,6 +26,11 @@ import javax.inject.Singleton
  * Analytics tracker that persists events to local database before uploading
  */
 @Singleton
+private const val UNKNOWN_ERROR = "Unknown error"
+private const val UNKNOWN_VALUE = "unknown"
+private const val UNKNOWN_BUILD = "0"
+private const val STACK_TRACE_MAX_LENGTH = 500
+
 class PersistentAnalyticsTracker @Inject constructor(
     @param:ApplicationContext private val context: Context,
     private val analyticsEventDao: AnalyticsEventDao,
@@ -41,20 +46,21 @@ class PersistentAnalyticsTracker @Inject constructor(
         try {
             DeviceInfo(
                 deviceId = getDeviceId(),
-                manufacturer = Build.MANUFACTURER ?: "unknown",
-                model = Build.MODEL ?: "unknown",
-                osVersion = "Android ${Build.VERSION.RELEASE ?: "unknown"}",
-                appVersion = try { BuildConfig.VERSION_NAME } catch (_: Exception) { "unknown" },
+                manufacturer = Build.MANUFACTURER ?: UNKNOWN_VALUE,
+                model = Build.MODEL ?: UNKNOWN_VALUE,
+                osVersion = "Android ${Build.VERSION.RELEASE ?: UNKNOWN_VALUE}",
+                appVersion = try { BuildConfig.VERSION_NAME } catch (_: Exception) { UNKNOWN_VALUE },
                 locale = Locale.getDefault().toString(),
                 timezone = TimeZone.getDefault().id
             )
         } catch (e: Exception) {
+            Timber.w(e, "Failed to create DeviceInfo, using fallback")
             DeviceInfo(
                 deviceId = UUID.randomUUID().toString(),
-                manufacturer = "unknown",
-                model = "unknown",
-                osVersion = "unknown",
-                appVersion = "unknown",
+                manufacturer = UNKNOWN_VALUE,
+                model = UNKNOWN_VALUE,
+                osVersion = UNKNOWN_VALUE,
+                appVersion = UNKNOWN_VALUE,
                 locale = Locale.getDefault().toString(),
                 timezone = TimeZone.getDefault().id
             )
@@ -64,12 +70,13 @@ class PersistentAnalyticsTracker @Inject constructor(
     private val appInfo by lazy {
         try {
             AppInfo(
-                appVersion = try { BuildConfig.VERSION_NAME } catch (_: Exception) { "unknown" },
-                buildNumber = try { BuildConfig.VERSION_CODE.toString() } catch (_: Exception) { "0" },
+                appVersion = try { BuildConfig.VERSION_NAME } catch (_: Exception) { UNKNOWN_VALUE },
+                buildNumber = try { BuildConfig.VERSION_CODE.toString() } catch (_: Exception) { UNKNOWN_BUILD },
                 isDebug = try { BuildConfig.DEBUG } catch (_: Exception) { false }
             )
         } catch (e: Exception) {
-            AppInfo(appVersion = "unknown", buildNumber = "0", isDebug = false)
+            Timber.w(e, "Failed to create AppInfo, using fallback")
+            AppInfo(appVersion = UNKNOWN_VALUE, buildNumber = UNKNOWN_BUILD, isDebug = false)
         }
     }
 
@@ -85,8 +92,8 @@ class PersistentAnalyticsTracker @Inject constructor(
 
     override fun trackError(error: Throwable, context: Map<String, Any>) {
         val params = context.mapValues { it.value.toString() }.toMutableMap()
-        params[Params.ERROR_MESSAGE] = error.message ?: "Unknown error"
-        params[Params.ERROR_TYPE] = error::class.simpleName ?: "Unknown"
+        params[Params.ERROR_MESSAGE] = error.message ?: UNKNOWN_ERROR
+        params[Params.ERROR_TYPE] = error::class.simpleName ?: UNKNOWN_VALUE
         params[Params.ERROR_CLASS] = error::class.java.name
 
         val analyticsEvent = createAnalyticsEvent(
@@ -115,7 +122,7 @@ class PersistentAnalyticsTracker @Inject constructor(
             }
             is AppError.ValidationError -> {
                 params[Params.ERROR_TYPE] = "ValidationError"
-                params["field"] = appError.field
+                params[Params.FIELD] = appError.field
             }
             is AppError.ServerError -> {
                 params[Params.ERROR_TYPE] = "ServerError"
@@ -138,9 +145,9 @@ class PersistentAnalyticsTracker @Inject constructor(
 
         // Add throwable information if available
         appError.throwable?.let { throwable ->
-            params["throwable_class"] = throwable::class.java.name
-            params["throwable_message"] = throwable.message ?: "No message"
-            params["stack_trace_top"] = throwable.stackTraceToString().take(500)
+            params[Params.THROWABLE_CLASS] = throwable::class.java.name
+            params[Params.THROWABLE_MESSAGE] = throwable.message ?: "No message"
+            params[Params.STACK_TRACE_TOP] = throwable.stackTraceToString().take(STACK_TRACE_MAX_LENGTH)
         }
 
         val analyticsEvent = createAnalyticsEvent(
@@ -176,7 +183,7 @@ class PersistentAnalyticsTracker @Inject constructor(
     }
 
     override fun setUserProperty(key: String, value: String) {
-        if (key == "user_id") {
+        if (key == Params.USER_ID) {
             currentUserId = value
         }
         Timber.d("👤 User property set: $key=$value")
@@ -273,6 +280,7 @@ class PersistentAnalyticsTracker @Inject constructor(
                 Settings.Secure.ANDROID_ID
             ) ?: UUID.randomUUID().toString()
         } catch (e: Exception) {
+            Timber.w(e, "Failed to get device ID, using random UUID")
             UUID.randomUUID().toString()
         }
     }

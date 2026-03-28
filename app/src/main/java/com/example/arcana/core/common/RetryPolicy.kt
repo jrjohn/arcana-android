@@ -17,6 +17,8 @@ class RetryPolicy(
     private val maxDelayMillis: Long = 30000L,
     private val factor: Double = 2.0
 ) {
+    private fun fallbackException(): Exception =
+        Exception("Unknown error after $maxAttempts attempts")
     /**
      * Executes the given block with retry logic and exponential backoff
      *
@@ -46,7 +48,7 @@ class RetryPolicy(
         }
 
         Timber.e(lastException, "All $maxAttempts attempts failed")
-        return Result.failure(lastException ?: Exception("Unknown error after $maxAttempts attempts"))
+        return Result.failure(lastException ?: fallbackException())
     }
 
     /**
@@ -87,7 +89,7 @@ class RetryPolicy(
         }
 
         Timber.e(lastException, "All $maxAttempts attempts failed")
-        return Result.failure(lastException ?: Exception("Unknown error after $maxAttempts attempts"))
+        return Result.failure(lastException ?: fallbackException())
     }
 
     companion object {

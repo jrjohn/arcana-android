@@ -55,6 +55,9 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
+private const val PLACEHOLDER_AVATAR_URL = "https://via.placeholder.com/150"
+private const val NOT_AVAILABLE = "N/A"
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UserDetailScreen(
@@ -65,15 +68,17 @@ fun UserDetailScreen(
     var showEditDialog by remember { mutableStateOf(false) }
     var showDeleteDialog by remember { mutableStateOf(false) }
 
+    val snackbarHostState = remember { androidx.compose.material3.SnackbarHostState() }
+
     // Handle effects from ViewModel
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
             when (effect) {
                 is UserDetailViewModel.Effect.ShowError -> {
-                    // Could show snackbar here
+                    snackbarHostState.showSnackbar(effect.message)
                 }
                 is UserDetailViewModel.Effect.ShowSuccess -> {
-                    // Could show snackbar here
+                    snackbarHostState.showSnackbar(effect.message)
                 }
                 is UserDetailViewModel.Effect.NavigateBack -> {
                     onNavigateBack()
@@ -85,6 +90,7 @@ fun UserDetailScreen(
     val user = uiState.user ?: return
 
     Scaffold(
+        snackbarHost = { androidx.compose.material3.SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(
                 title = { Text("User Details") },
@@ -138,7 +144,7 @@ fun UserDetailScreen(
             ) {
                 // Avatar at the top
                 AsyncImage(
-                    model = user.avatar.ifEmpty { "https://via.placeholder.com/150" },
+                    model = user.avatar.ifEmpty { PLACEHOLDER_AVATAR_URL },
                     contentDescription = "User avatar",
                     modifier = Modifier
                         .size(150.dp)
@@ -198,14 +204,14 @@ fun UserDetailScreen(
                     DetailRow(
                         icon = Icons.Default.Person,
                         label = "First Name",
-                        value = user.firstName.ifEmpty { "N/A" }
+                        value = user.firstName.ifEmpty { NOT_AVAILABLE }
                     )
 
                     // Last Name
                     DetailRow(
                         icon = Icons.Default.Person,
                         label = "Last Name",
-                        value = user.lastName.ifEmpty { "N/A" }
+                        value = user.lastName.ifEmpty { NOT_AVAILABLE }
                     )
 
                     // Full Name
@@ -219,7 +225,7 @@ fun UserDetailScreen(
                     DetailRow(
                         icon = Icons.Default.Email,
                         label = "Email",
-                        value = user.email.ifEmpty { "N/A" }
+                        value = user.email.ifEmpty { NOT_AVAILABLE }
                     )
                 }
             }
@@ -266,7 +272,7 @@ fun UserDetailScreen(
                     // Avatar URL
                     MetadataRow(
                         label = "Avatar URL",
-                        value = user.avatar.ifEmpty { "N/A" }
+                        value = user.avatar.ifEmpty { NOT_AVAILABLE }
                     )
                 }
             }
