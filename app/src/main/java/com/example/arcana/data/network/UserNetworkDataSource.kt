@@ -1,6 +1,6 @@
 package com.example.arcana.data.network
 
-import com.example.arcana.data.model.User
+import com.example.arcana.domain.model.User
 import com.example.arcana.data.remote.ApiService
 import com.example.arcana.data.remote.CreateUserRequest
 import com.example.arcana.data.remote.UserDto

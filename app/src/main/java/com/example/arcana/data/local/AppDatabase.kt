@@ -4,8 +4,8 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import com.example.arcana.data.local.dao.AnalyticsEventDao
 import com.example.arcana.data.local.entity.AnalyticsEventEntity
-import com.example.arcana.data.model.User
-import com.example.arcana.data.model.UserChange
+import com.example.arcana.domain.model.User
+import com.example.arcana.domain.model.UserChange
 
 @Database(
     entities = [User::class, UserChange::class, AnalyticsEventEntity::class],

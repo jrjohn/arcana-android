@@ -4,7 +4,7 @@ import app.cash.turbine.test
 import com.example.arcana.R
 import com.example.arcana.core.analytics.AnalyticsTracker
 import com.example.arcana.core.common.StringProvider
-import com.example.arcana.data.model.User
+import com.example.arcana.domain.model.User
 import com.example.arcana.domain.service.UserService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi

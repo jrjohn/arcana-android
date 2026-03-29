@@ -1,8 +1,8 @@
 package com.example.arcana.domain.service.impl
 
-import com.example.arcana.data.model.User
-import com.example.arcana.domain.repository.impl.CacheEventBus
-import com.example.arcana.domain.repository.impl.CacheInvalidationEvent
+import com.example.arcana.domain.model.User
+import com.example.arcana.domain.repository.CacheEventBus
+import com.example.arcana.domain.repository.CacheInvalidationEvent
 import com.example.arcana.domain.repository.DataRepository
 import com.example.arcana.domain.service.UserService
 import com.example.arcana.sync.Synchronizer

@@ -1,6 +1,6 @@
 package com.example.arcana.domain.repository
 
-import com.example.arcana.data.model.User
+import com.example.arcana.domain.model.User
 import kotlinx.coroutines.flow.Flow
 
 interface DataRepository {

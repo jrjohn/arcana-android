@@ -3,7 +3,7 @@ package com.example.arcana.data.local
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
-import com.example.arcana.data.model.UserChange
+import com.example.arcana.domain.model.UserChange
 
 @Dao
 interface UserChangeDao {

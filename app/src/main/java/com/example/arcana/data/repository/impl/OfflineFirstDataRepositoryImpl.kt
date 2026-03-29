@@ -1,12 +1,14 @@
-package com.example.arcana.domain.repository.impl
+package com.example.arcana.data.repository.impl
 
 import com.example.arcana.core.common.NetworkMonitor
+import com.example.arcana.domain.repository.CacheEventBus
+import com.example.arcana.domain.repository.CacheInvalidationEvent
 import com.example.arcana.domain.repository.DataRepository
 import com.example.arcana.data.local.UserChangeDao
 import com.example.arcana.data.local.UserDao
-import com.example.arcana.data.model.ChangeType
-import com.example.arcana.data.model.User
-import com.example.arcana.data.model.UserChange
+import com.example.arcana.domain.model.ChangeType
+import com.example.arcana.domain.model.User
+import com.example.arcana.domain.model.UserChange
 import com.example.arcana.data.network.UserNetworkDataSource
 import com.example.arcana.data.remote.CreateUserRequest
 import com.example.arcana.sync.Syncable

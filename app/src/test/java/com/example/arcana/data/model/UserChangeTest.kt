@@ -1,4 +1,4 @@
-package com.example.arcana.data.model
+package com.example.arcana.domain.model
 
 import org.junit.Test
 import kotlin.test.assertEquals

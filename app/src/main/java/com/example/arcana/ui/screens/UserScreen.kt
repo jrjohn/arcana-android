@@ -55,7 +55,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import coil.compose.AsyncImage
-import com.example.arcana.data.model.User
+import com.example.arcana.domain.model.User
 import timber.log.Timber
 
 private const val PLACEHOLDER_AVATAR_URL = "https://via.placeholder.com/150"

@@ -2,7 +2,7 @@ package com.example.arcana.domain.validation
 
 import com.example.arcana.R
 import com.example.arcana.core.common.StringProvider
-import com.example.arcana.data.model.User
+import com.example.arcana.domain.model.User
 import org.junit.Before
 import org.junit.Test
 import org.mockito.kotlin.any

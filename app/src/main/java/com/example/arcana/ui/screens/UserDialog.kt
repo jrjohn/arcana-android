@@ -35,7 +35,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import com.example.arcana.data.model.User
+import com.example.arcana.domain.model.User
 import com.example.arcana.domain.model.EmailAddress
 import com.example.arcana.domain.validation.UserValidator
 

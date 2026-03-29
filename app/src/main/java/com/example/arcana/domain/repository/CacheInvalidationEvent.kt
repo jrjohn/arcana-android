@@ -1,4 +1,4 @@
-package com.example.arcana.domain.repository.impl
+package com.example.arcana.domain.repository
 
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow

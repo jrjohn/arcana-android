@@ -1,6 +1,6 @@
 package com.example.arcana.ui.screens
 
-import com.example.arcana.data.model.User
+import com.example.arcana.domain.model.User
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.emptyFlow

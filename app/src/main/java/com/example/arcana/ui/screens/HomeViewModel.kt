@@ -9,7 +9,7 @@ import com.example.arcana.core.analytics.Params
 import com.example.arcana.core.analytics.annotations.TrackScreen
 import com.example.arcana.core.analytics.trackFlow
 import com.example.arcana.core.analytics.trackSync
-import com.example.arcana.data.model.User
+import com.example.arcana.domain.model.User
 import com.example.arcana.domain.service.UserService
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel

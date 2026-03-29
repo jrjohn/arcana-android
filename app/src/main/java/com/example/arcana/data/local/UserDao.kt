@@ -6,7 +6,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Upsert
-import com.example.arcana.data.model.User
+import com.example.arcana.domain.model.User
 import kotlinx.coroutines.flow.Flow
 
 @Dao

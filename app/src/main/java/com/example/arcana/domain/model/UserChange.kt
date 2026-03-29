@@ -1,4 +1,4 @@
-package com.example.arcana.data.model
+package com.example.arcana.domain.model
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
