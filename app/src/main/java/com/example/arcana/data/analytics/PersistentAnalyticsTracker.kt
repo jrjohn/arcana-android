@@ -4,9 +4,7 @@ import android.content.Context
 import android.os.Build
 import android.provider.Settings
 import com.example.arcana.BuildConfig
-import com.example.arcana.core.analytics.AnalyticsTracker
-import com.example.arcana.core.analytics.Events
-import com.example.arcana.core.analytics.Params
+import com.example.arcana.core.analytics.*
 import com.example.arcana.core.common.AppError
 import com.example.arcana.core.common.isRetryable
 import com.example.arcana.data.local.dao.AnalyticsEventDao
