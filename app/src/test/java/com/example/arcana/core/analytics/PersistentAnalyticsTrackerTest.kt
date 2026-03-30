@@ -2,6 +2,7 @@ package com.example.arcana.core.analytics
 
 import android.content.ContentResolver
 import android.content.Context
+import com.example.arcana.data.analytics.PersistentAnalyticsTracker
 import com.example.arcana.core.common.AppError
 import com.example.arcana.core.common.ErrorCode
 import com.example.arcana.data.local.dao.AnalyticsEventDao
