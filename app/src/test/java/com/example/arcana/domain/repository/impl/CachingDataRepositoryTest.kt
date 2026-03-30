@@ -3,6 +3,7 @@ package com.example.arcana.domain.repository.impl
 import com.example.arcana.data.repository.impl.CachingDataRepository
 import com.example.arcana.domain.model.User
 import com.example.arcana.domain.repository.CacheEventBus
+import com.example.arcana.domain.repository.CacheInvalidationEvent
 import com.example.arcana.domain.repository.DataRepository
 import com.example.arcana.sync.Syncable
 import kotlinx.coroutines.flow.flowOf
