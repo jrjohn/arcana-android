@@ -1,4 +1,4 @@
-package com.example.arcana.core.analytics
+package com.example.arcana.data.analytics
 
 import android.content.Context
 import android.os.Build
