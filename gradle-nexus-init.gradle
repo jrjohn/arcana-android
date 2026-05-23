@@ -1,33 +1,27 @@
 // Nexus proxy init script — injected during Docker build
 //
 // Iteration history:
-// v1 (project-level): `allprojects { repositories { maven { ... } } }`
-//   → Gradle 8 + PREFER_SETTINGS REJECTS with "repository 'maven' was added
-//     by initialization script"
-// v2 (settingsEvaluated): inject into settings.dependencyResolutionManagement
-//   AFTER settings.gradle evaluated
-//   → Same rejection — by the time settingsEvaluated fires, the project's
-//     settings.gradle has ALREADY locked dependencyResolutionManagement, so
-//     our additions are treated as project-level repos and rejected.
-// v3 (beforeSettings, this version): hook into `beforeSettings` which runs
-//   BEFORE settings.gradle is evaluated. Our repos become part of the
-//   "settings repositories" set BEFORE PREFER_SETTINGS mode is applied. Then
-//   when the project's settings.gradle does its own dependencyResolutionManagement
-//   block, it ADDS to ours (Gradle merges settings-level repo declarations
-//   across all sources, including init scripts that ran beforeSettings).
+// v1 allprojects { repositories } - rejected by PREFER_SETTINGS
+// v2 settingsEvaluated { settings.dependencyResolutionManagement } - same rejection
+// v3 beforeSettings { settings.dependencyResolutionManagement } - same rejection
+// v4 (this): override the project's PREFER_SETTINGS by setting repositoriesMode
+//    to PREFER_PROJECT from settingsEvaluated, THEN add repos via allprojects.
+//    This way Gradle accepts our project-level repo additions because the
+//    project itself (via init script override) is now in PREFER_PROJECT mode.
 def nexusUrl = System.getenv("NEXUS_URL")
 if (nexusUrl) {
-    beforeSettings { settings ->
-        settings.pluginManagement {
-            repositories {
-                maven {
-                    url "${nexusUrl}/gradle-plugins-proxy/"
-                    allowInsecureProtocol = true
-                }
-                gradlePluginPortal()
-            }
+    settingsEvaluated { settings ->
+        try {
+            settings.dependencyResolutionManagement.repositoriesMode.set(
+                org.gradle.api.initialization.resolve.RepositoriesMode.PREFER_PROJECT
+            )
+        } catch (e) {
+            // older Gradle versions or projects without dependencyResolutionManagement
         }
-        settings.dependencyResolutionManagement {
+    }
+
+    allprojects {
+        buildscript {
             repositories {
                 maven {
                     url "${nexusUrl}/google-maven-proxy/"
@@ -37,8 +31,20 @@ if (nexusUrl) {
                     url "${nexusUrl}/maven-central-proxy/"
                     allowInsecureProtocol = true
                 }
-                google()
-                mavenCentral()
+                maven {
+                    url "${nexusUrl}/gradle-plugins-proxy/"
+                    allowInsecureProtocol = true
+                }
+            }
+        }
+        repositories {
+            maven {
+                url "${nexusUrl}/google-maven-proxy/"
+                allowInsecureProtocol = true
+            }
+            maven {
+                url "${nexusUrl}/maven-central-proxy/"
+                allowInsecureProtocol = true
             }
         }
     }
