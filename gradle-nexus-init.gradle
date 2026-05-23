@@ -1,18 +1,23 @@
 // Nexus proxy init script — injected during Docker build
 //
-// History: previously used `allprojects { repositories { ... } }` (project-level
-// injection). Gradle 8+ with `RepositoriesMode.PREFER_SETTINGS` (default in AGP 8+
-// settings.gradle) rejects this with:
-//
-//   Build was configured to prefer settings repositories over project repositories
-//   but repository 'maven' was added by initialization script
-//
-// Fix: hook into `settingsEvaluated` and inject into settings-level
-// `pluginManagement` + `dependencyResolutionManagement`, which IS compatible with
-// PREFER_SETTINGS mode (those ARE the settings repositories).
+// Iteration history:
+// v1 (project-level): `allprojects { repositories { maven { ... } } }`
+//   → Gradle 8 + PREFER_SETTINGS REJECTS with "repository 'maven' was added
+//     by initialization script"
+// v2 (settingsEvaluated): inject into settings.dependencyResolutionManagement
+//   AFTER settings.gradle evaluated
+//   → Same rejection — by the time settingsEvaluated fires, the project's
+//     settings.gradle has ALREADY locked dependencyResolutionManagement, so
+//     our additions are treated as project-level repos and rejected.
+// v3 (beforeSettings, this version): hook into `beforeSettings` which runs
+//   BEFORE settings.gradle is evaluated. Our repos become part of the
+//   "settings repositories" set BEFORE PREFER_SETTINGS mode is applied. Then
+//   when the project's settings.gradle does its own dependencyResolutionManagement
+//   block, it ADDS to ours (Gradle merges settings-level repo declarations
+//   across all sources, including init scripts that ran beforeSettings).
 def nexusUrl = System.getenv("NEXUS_URL")
 if (nexusUrl) {
-    settingsEvaluated { settings ->
+    beforeSettings { settings ->
         settings.pluginManagement {
             repositories {
                 maven {
