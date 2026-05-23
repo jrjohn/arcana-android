@@ -1,51 +1,12 @@
-// Nexus proxy init script — injected during Docker build
+// DEPRECATED — kept as a no-op file to maintain Dockerfile.ci's COPY line.
 //
-// Iteration history:
-// v1 allprojects { repositories } - rejected by PREFER_SETTINGS
-// v2 settingsEvaluated { settings.dependencyResolutionManagement } - same rejection
-// v3 beforeSettings { settings.dependencyResolutionManagement } - same rejection
-// v4 (this): override the project's PREFER_SETTINGS by setting repositoriesMode
-//    to PREFER_PROJECT from settingsEvaluated, THEN add repos via allprojects.
-//    This way Gradle accepts our project-level repo additions because the
-//    project itself (via init script override) is now in PREFER_PROJECT mode.
-def nexusUrl = System.getenv("NEXUS_URL")
-if (nexusUrl) {
-    settingsEvaluated { settings ->
-        try {
-            settings.dependencyResolutionManagement.repositoriesMode.set(
-                org.gradle.api.initialization.resolve.RepositoriesMode.PREFER_PROJECT
-            )
-        } catch (e) {
-            // older Gradle versions or projects without dependencyResolutionManagement
-        }
-    }
-
-    allprojects {
-        buildscript {
-            repositories {
-                maven {
-                    url "${nexusUrl}/google-maven-proxy/"
-                    allowInsecureProtocol = true
-                }
-                maven {
-                    url "${nexusUrl}/maven-central-proxy/"
-                    allowInsecureProtocol = true
-                }
-                maven {
-                    url "${nexusUrl}/gradle-plugins-proxy/"
-                    allowInsecureProtocol = true
-                }
-            }
-        }
-        repositories {
-            maven {
-                url "${nexusUrl}/google-maven-proxy/"
-                allowInsecureProtocol = true
-            }
-            maven {
-                url "${nexusUrl}/maven-central-proxy/"
-                allowInsecureProtocol = true
-            }
-        }
-    }
-}
+// The init-script approach was rejected by Gradle 8+ when settings.gradle.kts
+// uses `RepositoriesMode.FAIL_ON_PROJECT_REPOS` (which this project does).
+// Init scripts cannot inject settings-level repos, and project-level repo
+// additions are forbidden by FAIL_ON_PROJECT_REPOS.
+//
+// Nexus injection now happens directly in settings.gradle.kts via env var
+// `NEXUS_URL` (set null/missing = local dev with public repos; set = CI with
+// Nexus proxies prepended before the public repos).
+//
+// This file intentionally contains no executable code.
