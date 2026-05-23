@@ -1,8 +1,28 @@
 // Nexus proxy init script — injected during Docker build
+//
+// History: previously used `allprojects { repositories { ... } }` (project-level
+// injection). Gradle 8+ with `RepositoriesMode.PREFER_SETTINGS` (default in AGP 8+
+// settings.gradle) rejects this with:
+//
+//   Build was configured to prefer settings repositories over project repositories
+//   but repository 'maven' was added by initialization script
+//
+// Fix: hook into `settingsEvaluated` and inject into settings-level
+// `pluginManagement` + `dependencyResolutionManagement`, which IS compatible with
+// PREFER_SETTINGS mode (those ARE the settings repositories).
 def nexusUrl = System.getenv("NEXUS_URL")
 if (nexusUrl) {
-    allprojects {
-        buildscript {
+    settingsEvaluated { settings ->
+        settings.pluginManagement {
+            repositories {
+                maven {
+                    url "${nexusUrl}/gradle-plugins-proxy/"
+                    allowInsecureProtocol = true
+                }
+                gradlePluginPortal()
+            }
+        }
+        settings.dependencyResolutionManagement {
             repositories {
                 maven {
                     url "${nexusUrl}/google-maven-proxy/"
@@ -12,20 +32,8 @@ if (nexusUrl) {
                     url "${nexusUrl}/maven-central-proxy/"
                     allowInsecureProtocol = true
                 }
-                maven {
-                    url "${nexusUrl}/gradle-plugins-proxy/"
-                    allowInsecureProtocol = true
-                }
-            }
-        }
-        repositories {
-            maven {
-                url "${nexusUrl}/google-maven-proxy/"
-                allowInsecureProtocol = true
-            }
-            maven {
-                url "${nexusUrl}/maven-central-proxy/"
-                allowInsecureProtocol = true
+                google()
+                mavenCentral()
             }
         }
     }
