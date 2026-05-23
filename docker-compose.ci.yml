@@ -8,7 +8,6 @@ services:
     image: localhost:5000/arcana/android-app:${VERSION:-1.0.0}
     platform: linux/amd64
     volumes:
-      - .:/project
       - gradle-cache:/root/.gradle
     command: ./gradlew assembleDebug --no-daemon
 
@@ -16,7 +15,6 @@ services:
     image: localhost:5000/arcana/android-app:${VERSION:-1.0.0}
     platform: linux/amd64
     volumes:
-      - .:/project
       - gradle-cache:/root/.gradle
     command: >
       bash -c "./gradlew testDebugUnitTest --no-daemon --continue;
@@ -27,7 +25,6 @@ services:
     image: localhost:5000/arcana/android-app:${VERSION:-1.0.0}
     platform: linux/amd64
     volumes:
-      - .:/project
       - gradle-cache:/root/.gradle
     command: bundle exec fastlane ci
 
@@ -36,7 +33,6 @@ services:
     image: localhost:5000/arcana/android-app:${VERSION:-1.0.0}
     platform: linux/amd64
     volumes:
-      - .:/project
       - gradle-cache:/root/.gradle
     environment:
       - KEYSTORE_FILE=/project/keystore.jks
@@ -50,7 +46,6 @@ services:
     image: localhost:5000/arcana/android-app:${VERSION:-1.0.0}
     platform: linux/amd64
     volumes:
-      - .:/project
       - gradle-cache:/root/.gradle
     environment:
       - KEYSTORE_FILE=/project/keystore.jks
