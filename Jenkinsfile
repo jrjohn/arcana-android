@@ -60,6 +60,22 @@ pipeline {
             }
         }
 
+        stage("Cleanup Stale Gradle Locks") {
+            // Build #21 was killed mid-gradle by a Jenkins agent flap and left
+            // /root/.gradle/caches/journal-1/journal-1.lock owned by a dead PID,
+            // blocking the next gradle invocation with a "Timeout waiting to lock
+            // journal cache" error. disableConcurrentBuilds() guarantees no other
+            // build holds the volume right now, so it's safe to wipe stale locks.
+            steps {
+                sh '''
+                    docker run --rm \
+                        -v arcana-android_gradle-cache:/cache \
+                        alpine:3 \
+                        sh -c 'find /cache -name "*.lock" -type f -print -delete 2>/dev/null || true'
+                '''
+            }
+        }
+
         stage("Gradle Build") {
             steps {
                 sh "docker compose -f docker-compose.ci.yml run --rm android-build"
