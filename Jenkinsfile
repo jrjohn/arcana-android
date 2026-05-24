@@ -13,7 +13,7 @@ pipeline {
     agent any
 
     options {
-        timeout(time: 240, unit: 'MINUTES')
+        timeout(time: 360, unit: 'MINUTES')
         disableConcurrentBuilds()
         buildDiscarder(logRotator(numToKeepStr: '10'))
         timestamps()
