@@ -56,3 +56,5 @@ services:
 
 volumes:
   gradle-cache:
+    external: true
+    name: arcana-android_shared_gradle-cache
