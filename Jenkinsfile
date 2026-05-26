@@ -71,7 +71,20 @@ pipeline {
                     docker run --rm \
                         -v arcana-android_gradle-cache:/cache \
                         alpine:3 \
-                        sh -c 'find /cache -name "*.lock" -type f -print -delete 2>/dev/null || true'
+                        sh -c '
+                            # Wipe stale locks
+                            find /cache -name "*.lock" -type f -print -delete 2>/dev/null
+                            # Wipe FileAccessTimeJournal partial state — #31 hit
+                            # "Could not create service of type FileAccessTimeJournal"
+                            # because journal-1/ was half-written by an interrupted build.
+                            rm -rf /cache/caches/journal-1 2>/dev/null
+                            # Wipe transient transforms (occasional corruption)
+                            rm -rf /cache/caches/transforms-* 2>/dev/null
+                            rm -rf /cache/caches/*/transforms-* 2>/dev/null
+                            # Wipe Gradle daemon registry (stale PIDs cause "Daemon expired" loops)
+                            rm -rf /cache/daemon 2>/dev/null
+                            true
+                        '
                 '''
             }
         }
