@@ -81,6 +81,12 @@ pipeline {
                         -v arcana-android_gradle-cache:/cache \
                         alpine:3 \
                         sh -c "find /cache -name '*.lock' -type f -delete 2>/dev/null ; rm -rf /cache/caches/journal-1 /cache/caches/transforms-* /cache/caches/*/transforms-* /cache/daemon 2>/dev/null ; true"
+                    # Also reclaim docker network subnet pool — bridge driver only has
+                    # ~30 /16 slots in the default pool. Each multibranch PR build
+                    # claims one (NAME_default), and #34 hit "all predefined address
+                    # pools have been fully subnetted" on a fresh main build because
+                    # closed-PR networks were never reclaimed.
+                    docker network prune -f >/dev/null 2>&1 || true
                 '''
             }
         }
