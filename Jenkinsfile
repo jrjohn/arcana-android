@@ -148,17 +148,16 @@ pipeline {
                         string(credentialsId: 'android-key-password', variable: 'KEY_PASSWORD'),
                         string(credentialsId: 'android-store-password', variable: 'STORE_PASSWORD')
                     ]) {
+                        // Use the docker-compose android-aab service (mounts .:/project)
+                        // instead of a raw `docker run ... bash -c '...'` — the inline
+                        // bash -c &&-chain broke across the Groovy/sh/docker quoting
+                        // layers (#42/#43: "Could not locate Gemfile"). Compose sets
+                        // working_dir + env cleanly. Stage the keystore credential as
+                        // /project/keystore.jks (where the service expects KEYSTORE_FILE).
                         sh '''
-                            KEYSTORE_B64=$(base64 -w 0 $KEYSTORE_FILE)
-                            docker run --rm \
-                                -v $(pwd):/project \
-                                -v arcana-android_gradle-cache:/root/.gradle \
-                                -e KEYSTORE_B64="$KEYSTORE_B64" \
-                                -e KEY_ALIAS=$KEY_ALIAS \
-                                -e KEY_PASSWORD=$KEY_PASSWORD \
-                                -e STORE_PASSWORD=$STORE_PASSWORD \
-                                localhost:5000/arcana/android-app:1.0.0 \
-                                bash -c 'cd /project && echo "$KEYSTORE_B64" | base64 -d > /tmp/arcana.keystore && KEYSTORE_FILE=/tmp/arcana.keystore bundle exec fastlane bundle_release'
+                            cp "$KEYSTORE_FILE" keystore.jks
+                            KEY_ALIAS="$KEY_ALIAS" KEY_PASSWORD="$KEY_PASSWORD" STORE_PASSWORD="$STORE_PASSWORD" \
+                                docker compose -f docker-compose.ci.yml run --rm android-aab
                         '''
                     }
                 }
@@ -180,17 +179,11 @@ pipeline {
                         string(credentialsId: 'android-key-password', variable: 'KEY_PASSWORD'),
                         string(credentialsId: 'android-store-password', variable: 'STORE_PASSWORD')
                     ]) {
+                        // Same compose-based approach as Build Release AAB (see note there).
                         sh '''
-                            KEYSTORE_B64=$(base64 -w 0 $KEYSTORE_FILE)
-                            docker run --rm \
-                                -v $(pwd):/project \
-                                -v arcana-android_gradle-cache:/root/.gradle \
-                                -e KEYSTORE_B64="$KEYSTORE_B64" \
-                                -e KEY_ALIAS=$KEY_ALIAS \
-                                -e KEY_PASSWORD=$KEY_PASSWORD \
-                                -e STORE_PASSWORD=$STORE_PASSWORD \
-                                localhost:5000/arcana/android-app:1.0.0 \
-                                bash -c 'cd /project && echo "$KEYSTORE_B64" | base64 -d > /tmp/arcana.keystore && KEYSTORE_FILE=/tmp/arcana.keystore bundle exec fastlane build_release'
+                            cp "$KEYSTORE_FILE" keystore.jks
+                            KEY_ALIAS="$KEY_ALIAS" KEY_PASSWORD="$KEY_PASSWORD" STORE_PASSWORD="$STORE_PASSWORD" \
+                                docker compose -f docker-compose.ci.yml run --rm android-release
                         '''
                     }
                 }

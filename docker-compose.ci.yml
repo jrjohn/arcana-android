@@ -30,10 +30,16 @@ services:
     command: bundle exec fastlane ci
 
   # fastlane bundle_release: signed release AAB for Play Store
+  # Mounts the workspace at /project so KEYSTORE_FILE=/project/keystore.jks
+  # (Jenkins copies the android-keystore credential there) + the Gemfile
+  # resolve. Without the .:/project mount the service can't find either,
+  # which is why the old raw `docker run ... bash -c 'cd /project && ...'`
+  # approach failed with "Could not locate Gemfile" (#42/#43).
   android-aab:
     image: localhost:5000/arcana/android-app:${VERSION:-1.0.0}
     platform: linux/amd64
     volumes:
+      - .:/project
       - gradle-cache:/root/.gradle
     environment:
       - KEYSTORE_FILE=/project/keystore.jks
@@ -47,6 +53,7 @@ services:
     image: localhost:5000/arcana/android-app:${VERSION:-1.0.0}
     platform: linux/amd64
     volumes:
+      - .:/project
       - gradle-cache:/root/.gradle
     environment:
       - KEYSTORE_FILE=/project/keystore.jks

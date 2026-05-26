@@ -12,3 +12,6 @@ fastlane/screenshots
 fastlane/test_output
 fastlane/google-play-key.json
 Gemfile.lock
+
+# CI release-signing keystore (staged from Jenkins credential at build time)
+keystore.jks
