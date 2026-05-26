@@ -158,7 +158,7 @@ pipeline {
                                 -e KEY_PASSWORD=$KEY_PASSWORD \
                                 -e STORE_PASSWORD=$STORE_PASSWORD \
                                 localhost:5000/arcana/android-app:1.0.0 \
-                                bash -c 'echo "$KEYSTORE_B64" | base64 -d > /tmp/arcana.keystore && KEYSTORE_FILE=/tmp/arcana.keystore bundle exec fastlane bundle_release'
+                                bash -c 'cd /project && echo "$KEYSTORE_B64" | base64 -d > /tmp/arcana.keystore && KEYSTORE_FILE=/tmp/arcana.keystore bundle exec fastlane bundle_release'
                         '''
                     }
                 }
@@ -190,7 +190,7 @@ pipeline {
                                 -e KEY_PASSWORD=$KEY_PASSWORD \
                                 -e STORE_PASSWORD=$STORE_PASSWORD \
                                 localhost:5000/arcana/android-app:1.0.0 \
-                                bash -c 'echo "$KEYSTORE_B64" | base64 -d > /tmp/arcana.keystore && KEYSTORE_FILE=/tmp/arcana.keystore bundle exec fastlane build_release'
+                                bash -c 'cd /project && echo "$KEYSTORE_B64" | base64 -d > /tmp/arcana.keystore && KEYSTORE_FILE=/tmp/arcana.keystore bundle exec fastlane build_release'
                         '''
                     }
                 }
