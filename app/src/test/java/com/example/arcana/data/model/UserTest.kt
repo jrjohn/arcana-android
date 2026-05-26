@@ -17,6 +17,11 @@ class UserTest {
         firstName: String = "John",
         lastName: String = "Doe",
         avatar: String = "https://example.com/avatar.jpg",
+        // Pin updatedAt — User defaults it to System.currentTimeMillis(), so
+        // two makeUser() calls a few ms apart produce non-equal Users and the
+        // "equals works for identical objects" test fails intermittently
+        // (flaky: passes only when both ctor calls land in the same millisecond).
+        updatedAt: Long = 0L,
         version: Int = 1
     ) = User(
         id = id,
@@ -24,6 +29,7 @@ class UserTest {
         firstName = firstName,
         lastName = lastName,
         avatar = avatar,
+        updatedAt = updatedAt,
         version = version
     )
 
