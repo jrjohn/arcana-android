@@ -147,6 +147,11 @@ dependencies {
     testImplementation(libs.mockito.kotlin)
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.turbine)
+    // AnnotationsTest uses kotlin.reflect.* APIs; without explicit
+    // kotlin-reflect on the test classpath Kotlin emits 16 "Call uses
+    // reflection API which is not found in compilation classpath" warnings.
+    // L1+L2 strict mode treats warnings as build failures.
+    testImplementation(kotlin("reflect"))
 }
 
 kotlin {
