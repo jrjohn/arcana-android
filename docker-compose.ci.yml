@@ -57,5 +57,8 @@ services:
 
 volumes:
   gradle-cache:
-    external: true
-    name: arcana-android_shared_gradle-cache
+    # Per-job volume (auto-named <project>_gradle-cache).
+    # Reverted from external shared volume — that triggered persistent
+    # journal-1 lock contention inside the container that no
+    # gradle.properties knob could resolve. Accept the cold-build cost
+    # for now; revisit when we understand the race.
