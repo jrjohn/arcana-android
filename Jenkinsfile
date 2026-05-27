@@ -13,7 +13,12 @@ pipeline {
     agent any
 
     options {
-        timeout(time: 360, unit: 'MINUTES')
+        // 9h. The amd64 release builds run under qemu (no native arm64 aapt2/d8),
+        // so Build Release AAB (bundleRelease ~136m) + Build Release APK
+        // (assembleRelease ~120m) plus ~123m of earlier stages legitimately need
+        // ~6.5h. The old 360m timeout was sized when those release stages failed
+        // instantly (0m, broken keystore mount) and aborted #51 mid-APK at 384m.
+        timeout(time: 540, unit: 'MINUTES')
         disableConcurrentBuilds()
         buildDiscarder(logRotator(numToKeepStr: '10'))
         timestamps()
