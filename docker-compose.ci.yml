@@ -29,39 +29,46 @@ services:
       - gradle-cache:/root/.gradle
     command: bundle exec fastlane ci
 
-  # fastlane bundle_release: signed release AAB for Play Store
-  # Mount ONLY the keystore (single file) into the image's baked /project —
-  # NOT the whole workspace. The Dockerfile bakes the source + Gemfile +
-  # system-gem `bundle install` at /project (WORKDIR), but the Jenkins
-  # workspace has no Gemfile, so the old `- .:/project` mount shadowed the
-  # baked Gemfile → "Could not locate Gemfile" exit 10 (#42/#43/#49).
-  # Jenkins cp's the android-keystore credential to ./keystore.jks first.
+  # fastlane bundle_release: signed release AAB for Play Store.
+  #
+  # NO workspace/keystore bind mount. This compose runs against the HOST docker
+  # daemon (socket mount in the jenkins container), so any bind-mount source
+  # path resolves on the host — `- .:/project` shadowed the baked Gemfile/gems
+  # ("Could not locate Gemfile", #42/#43/#49) and `- ./keystore.jks:...`
+  # resolved to a path the host couldn't see ("not a directory", #50). The
+  # image already bakes the source + Gemfile + `bundle install` at /project.
+  # The keystore is injected as base64 (KEYSTORE_B64) and decoded in-place.
+  # Jenkins pulls the signed AAB back out with `docker cp` (no path mount).
+  # Validated on bluesea 2026-05-27: BUILD SUCCESSFUL, signReleaseBundle OK.
   android-aab:
     image: localhost:5000/arcana/android-app:${VERSION:-1.0.0}
     platform: linux/amd64
     volumes:
-      - ./keystore.jks:/project/keystore.jks
       - gradle-cache:/root/.gradle
     environment:
-      - KEYSTORE_FILE=/project/keystore.jks
+      - KEYSTORE_B64=${KEYSTORE_B64}
       - KEY_ALIAS=${KEY_ALIAS}
       - KEY_PASSWORD=${KEY_PASSWORD}
       - STORE_PASSWORD=${STORE_PASSWORD}
-    command: bundle exec fastlane bundle_release
+    command: >
+      bash -c "echo \"$$KEYSTORE_B64\" | base64 -d > /project/keystore.jks &&
+               KEYSTORE_FILE=/project/keystore.jks bundle exec fastlane bundle_release"
 
-  # fastlane build_release: signed release APK (keystore injected by Jenkins)
+  # fastlane build_release: signed release APK. Same env-b64 keystore design as
+  # android-aab (see note there) — no workspace/keystore bind mount.
   android-release:
     image: localhost:5000/arcana/android-app:${VERSION:-1.0.0}
     platform: linux/amd64
     volumes:
-      - ./keystore.jks:/project/keystore.jks
       - gradle-cache:/root/.gradle
     environment:
-      - KEYSTORE_FILE=/project/keystore.jks
+      - KEYSTORE_B64=${KEYSTORE_B64}
       - KEY_ALIAS=${KEY_ALIAS}
       - KEY_PASSWORD=${KEY_PASSWORD}
       - STORE_PASSWORD=${STORE_PASSWORD}
-    command: bundle exec fastlane build_release
+    command: >
+      bash -c "echo \"$$KEYSTORE_B64\" | base64 -d > /project/keystore.jks &&
+               KEYSTORE_FILE=/project/keystore.jks bundle exec fastlane build_release"
 
 volumes:
   gradle-cache:

@@ -148,16 +148,24 @@ pipeline {
                         string(credentialsId: 'android-key-password', variable: 'KEY_PASSWORD'),
                         string(credentialsId: 'android-store-password', variable: 'STORE_PASSWORD')
                     ]) {
-                        // Use the docker-compose android-aab service (mounts .:/project)
-                        // instead of a raw `docker run ... bash -c '...'` — the inline
-                        // bash -c &&-chain broke across the Groovy/sh/docker quoting
-                        // layers (#42/#43: "Could not locate Gemfile"). Compose sets
-                        // working_dir + env cleanly. Stage the keystore credential as
-                        // /project/keystore.jks (where the service expects KEYSTORE_FILE).
+                        // This compose talks to the HOST docker daemon, so bind-mount
+                        // source paths resolve on the host, not in this jenkins container
+                        // — `- .:/project` shadowed the baked Gemfile and
+                        // `- ./keystore.jks:...` couldn't be seen by the host daemon
+                        // (#42/#43/#49/#50). So mount NO workspace path: the image bakes
+                        // /project (source + Gemfile + bundle), the keystore is passed as
+                        // base64 the container decodes in-place, and the signed AAB is
+                        // pulled back with `docker cp` (CLI-side copy, no path mount).
                         sh '''
-                            cp "$KEYSTORE_FILE" keystore.jks
+                            set -e
+                            docker rm -f arcana-aab-build 2>/dev/null || true
+                            KEYSTORE_B64="$(base64 -w0 "$KEYSTORE_FILE")" \
                             KEY_ALIAS="$KEY_ALIAS" KEY_PASSWORD="$KEY_PASSWORD" STORE_PASSWORD="$STORE_PASSWORD" \
-                                docker compose -f docker-compose.ci.yml run --rm android-aab
+                                docker compose -f docker-compose.ci.yml run --name arcana-aab-build android-aab
+                            mkdir -p app/build/outputs/bundle/release app/build/outputs/mapping/release
+                            docker cp arcana-aab-build:/project/app/build/outputs/bundle/release/. app/build/outputs/bundle/release/ || true
+                            docker cp arcana-aab-build:/project/app/build/outputs/mapping/release/mapping.txt app/build/outputs/mapping/release/ || true
+                            docker rm -f arcana-aab-build 2>/dev/null || true
                         '''
                     }
                 }
@@ -179,11 +187,18 @@ pipeline {
                         string(credentialsId: 'android-key-password', variable: 'KEY_PASSWORD'),
                         string(credentialsId: 'android-store-password', variable: 'STORE_PASSWORD')
                     ]) {
-                        // Same compose-based approach as Build Release AAB (see note there).
+                        // Same env-b64 keystore + docker-cp design as Build Release AAB
+                        // (see note there). The signed APK is pulled back out for the
+                        // Verify APK stage / archiving.
                         sh '''
-                            cp "$KEYSTORE_FILE" keystore.jks
+                            set -e
+                            docker rm -f arcana-apk-build 2>/dev/null || true
+                            KEYSTORE_B64="$(base64 -w0 "$KEYSTORE_FILE")" \
                             KEY_ALIAS="$KEY_ALIAS" KEY_PASSWORD="$KEY_PASSWORD" STORE_PASSWORD="$STORE_PASSWORD" \
-                                docker compose -f docker-compose.ci.yml run --rm android-release
+                                docker compose -f docker-compose.ci.yml run --name arcana-apk-build android-release
+                            mkdir -p app/build/outputs/apk/release
+                            docker cp arcana-apk-build:/project/app/build/outputs/apk/release/. app/build/outputs/apk/release/ || true
+                            docker rm -f arcana-apk-build 2>/dev/null || true
                         '''
                     }
                 }
