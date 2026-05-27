@@ -4,16 +4,16 @@ services:
       context: .
       dockerfile: Dockerfile.ci
       platforms:
-        - linux/arm64
+        - linux/amd64
     image: localhost:5000/arcana/android-app:${VERSION:-1.0.0}
-    platform: linux/arm64
+    platform: linux/amd64
     volumes:
       - gradle-cache:/root/.gradle
     command: ./gradlew assembleDebug --no-daemon
 
   android-test:
     image: localhost:5000/arcana/android-app:${VERSION:-1.0.0}
-    platform: linux/arm64
+    platform: linux/amd64
     volumes:
       - .:/project
       - gradle-cache:/root/.gradle
@@ -24,7 +24,7 @@ services:
   # fastlane ci: lint + unit tests via fastlane
   android-fastlane:
     image: localhost:5000/arcana/android-app:${VERSION:-1.0.0}
-    platform: linux/arm64
+    platform: linux/amd64
     volumes:
       - gradle-cache:/root/.gradle
     command: bundle exec fastlane ci
@@ -37,7 +37,7 @@ services:
   # approach failed with "Could not locate Gemfile" (#42/#43).
   android-aab:
     image: localhost:5000/arcana/android-app:${VERSION:-1.0.0}
-    platform: linux/arm64
+    platform: linux/amd64
     volumes:
       - .:/project
       - gradle-cache:/root/.gradle
@@ -51,7 +51,7 @@ services:
   # fastlane build_release: signed release APK (keystore injected by Jenkins)
   android-release:
     image: localhost:5000/arcana/android-app:${VERSION:-1.0.0}
-    platform: linux/arm64
+    platform: linux/amd64
     volumes:
       - .:/project
       - gradle-cache:/root/.gradle
