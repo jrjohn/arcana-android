@@ -22,6 +22,10 @@ pipeline {
         disableConcurrentBuilds()
         buildDiscarder(logRotator(numToKeepStr: '10'))
         timestamps()
+        // Render ANSI colour codes (gradle/fastlane) in the Jenkins console.
+        // Needs the AnsiColor plugin. NOTE: raw consoleText still contains the
+        // escape codes — log consumers (daily-ci-agent) strip them when parsing.
+        ansiColor('xterm')
     }
 
     parameters {
@@ -112,33 +116,88 @@ pipeline {
         }
 
         stage("Unit Tests with Coverage") {
+            // Blocking: a failing unit test (non-zero from the test lane) fails the
+            // stage. The coverage report is pulled out with `docker cp` (DinD: no
+            // bind mount works, see docker-compose android-test note) so SonarQube
+            // can import it in the next stage.
             steps {
-                catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
-                    sh "docker compose -f docker-compose.ci.yml run --rm android-test"
+                sh '''
+                    docker rm -f arcana-test-build 2>/dev/null || true
+                    docker compose -f docker-compose.ci.yml run --name arcana-test-build android-test
+                    TEST_RC=$?
+                    mkdir -p app/build/reports app/build/test-results app/build/outputs
+                    docker cp arcana-test-build:/project/app/build/reports/. app/build/reports/ 2>/dev/null || true
+                    docker cp arcana-test-build:/project/app/build/test-results/. app/build/test-results/ 2>/dev/null || true
+                    docker cp arcana-test-build:/project/app/build/outputs/. app/build/outputs/ 2>/dev/null || true
+                    docker rm -f arcana-test-build 2>/dev/null || true
+                    exit $TEST_RC
+                '''
+            }
+            post {
+                always {
+                    junit allowEmptyResults: true, testResults: 'app/build/test-results/**/*.xml'
                 }
             }
         }
 
         stage("SonarQube Analysis") {
+            // Blocking quality gate. The scanner imports the JaCoCo coverage report
+            // pulled out by "Unit Tests with Coverage"; with the coverage.exclusions
+            // below (DI/Compose UI/navigation/theme/workers) SonarQube computes ~83.5%
+            // overall coverage, above the gate's 80% threshold. The build FAILS if the
+            // gate is not OK (coverage drop or new-code rating regression).
             steps {
-                catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
-                    withSonarQubeEnv('SonarQube') {
-                        script {
-                            def prArgs = env.CHANGE_ID ? """ \
-                                -Dsonar.pullrequest.key=${env.CHANGE_ID} \
-                                -Dsonar.pullrequest.branch=${env.BRANCH_NAME} \
-                                -Dsonar.pullrequest.base=${env.CHANGE_TARGET}""" : ''
-                            sh """sonar-scanner \
-                              -Dsonar.projectKey=android-app \
-                              -Dsonar.projectName="Android App" \
-                              -Dsonar.sources=. \
-                              -Dsonar.exclusions=**/build/**,**/.gradle/**,**/docs/**,**/test/** \
-                              -Dsonar.java.binaries=. \
-                              -Dsonar.scm.disabled=true \
-                              -Dsonar.coverage.jacoco.xmlReportPaths=app/build/reports/coverage/test/debug/report.xml,app/build/reports/coverage/unit/debug/report.xml \
-                              -Dsonar.coverage.exclusions=**/di/**,**/navigation/**,**/theme/**,**/ui/components/**,buildSrc/**,**/ui/screens/**,**/nav/**,**/NavGraph*,**/worker/**,**/MainActivity*,**/MyApplication*,**/ConnectivityManagerNetworkMonitor*,**/NavigationAnalyticsObserver*,**/AnalyticsManager*,**/SyncManager*${prArgs}"""
-                        }
-                    }
+                withSonarQubeEnv('SonarQube') {
+                    // NO sonar.pullrequest.* params: this is SonarQube Community Build,
+                    // which rejects them ("Developer Edition or above is required") and
+                    // fails the scan — which is why PR analysis was silently broken until
+                    // the gate became blocking. Analyze with the plain project key on
+                    // every branch and PR; the gate poll below keys off THIS run's
+                    // analysisId, so the OK/ERROR verdict is correct per-analysis even
+                    // though PR and main analyses share one project.
+                    sh """sonar-scanner \
+                      -Dsonar.projectKey=android-app \
+                      -Dsonar.projectName="Android App" \
+                      -Dsonar.sources=. \
+                      -Dsonar.exclusions=**/build/**,**/.gradle/**,**/docs/**,**/test/** \
+                      -Dsonar.java.binaries=. \
+                      -Dsonar.scm.disabled=true \
+                      -Dsonar.coverage.jacoco.xmlReportPaths=app/build/reports/coverage/test/debug/report.xml,app/build/reports/coverage/unit/debug/report.xml \
+                      -Dsonar.coverage.exclusions=**/di/**,**/navigation/**,**/theme/**,**/ui/components/**,buildSrc/**,**/ui/screens/**,**/nav/**,**/NavGraph*,**/worker/**,**/MainActivity*,**/MyApplication*,**/ConnectivityManagerNetworkMonitor*,**/NavigationAnalyticsObserver*,**/AnalyticsManager*,**/SyncManager*"""
+                    // waitForQualityGate() needs a server→Jenkins webhook (not
+                    // configured here); instead poll the compute-engine task named in
+                    // .scannerwork/report-task.txt, then read the gate status. The
+                    // jenkins agent has only curl (no jq), so parse JSON with grep.
+                    sh '''
+                        set -e
+                        # plugin exposes the token as SONAR_AUTH_TOKEN (2.x) or SONAR_TOKEN
+                        TOKEN="${SONAR_AUTH_TOKEN:-$SONAR_TOKEN}"
+                        RT=.scannerwork/report-task.txt
+                        [ -f "$RT" ] || { echo "report-task.txt not found — scanner did not run"; exit 1; }
+                        CE_TASK_ID=$(grep '^ceTaskId=' "$RT" | cut -d= -f2-)
+                        echo "CE task id: $CE_TASK_ID"
+                        ANALYSIS_ID=""
+                        for i in $(seq 1 60); do
+                            RESP=$(curl -s -u "$TOKEN:" "$SONAR_HOST_URL/api/ce/task?id=$CE_TASK_ID")
+                            ST=$(echo "$RESP" | grep -o '"status":"[A-Z_]*"' | head -1 | cut -d'"' -f4)
+                            echo "  CE status: ${ST:-?} (try $i)"
+                            if [ "$ST" = "SUCCESS" ]; then
+                                ANALYSIS_ID=$(echo "$RESP" | grep -o '"analysisId":"[^"]*"' | head -1 | cut -d'"' -f4)
+                                break
+                            elif [ "$ST" = "FAILED" ] || [ "$ST" = "CANCELED" ]; then
+                                echo "CE task ended $ST"; exit 1
+                            fi
+                            sleep 5
+                        done
+                        [ -n "$ANALYSIS_ID" ] || { echo "CE task did not finish in time"; exit 1; }
+                        GATE=$(curl -s -u "$TOKEN:" "$SONAR_HOST_URL/api/qualitygates/project_status?analysisId=$ANALYSIS_ID")
+                        GST=$(echo "$GATE" | grep -o '"status":"[A-Z]*"' | head -1 | cut -d'"' -f4)
+                        echo "Quality gate: ${GST:-UNKNOWN}"
+                        if [ "$GST" != "OK" ]; then
+                            echo "--- gate response ---"; echo "$GATE"
+                            exit 1
+                        fi
+                    '''
                 }
             }
         }
@@ -243,19 +302,30 @@ pipeline {
         }
 
         stage("Architecture Qube") {
+            // Blocking: arch-qube exits non-zero if the architecture score is below
+            // --threshold 90, which fails the stage. DinD-safe like the other stages:
+            // bind mounts resolve on the host daemon, so source is copied IN via a tar
+            // stream (excluding build/.git noise) and the report is copied OUT, both
+            // through anonymous volumes (/src, /output) that exist for the container.
             steps {
-                catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
-                    sh """
-                        mkdir -p arch-qube-reports
-                        docker run --rm --network devops_default \\
-                            -v \$(pwd):/project \\
-                            -v \$(pwd)/arch-qube-reports:/output \\
-                            arcana.boo/arcana/arch-qube:latest scan /project \\
-                            --framework android --no-ai \\
-                            --ci --format json,markdown \\
-                            -o /output --threshold 90 || true
-                    """
-                }
+                sh '''
+                    docker rm -f arcana-arch-qube 2>/dev/null || true
+                    docker create --name arcana-arch-qube --network devops_default \
+                        -v /src -v /output \
+                        arcana.boo/arcana/arch-qube:latest \
+                        scan /src --framework android --no-ai --ci \
+                        --format json,markdown -o /output --threshold 90 || exit 1
+                    tar --exclude=./.git --exclude=./app/build --exclude=./build \
+                        --exclude=./.gradle --exclude=./.scannerwork \
+                        --exclude=./arch-qube-reports -C . -cf - . \
+                        | docker cp - arcana-arch-qube:/src || exit 1
+                    docker start -a arcana-arch-qube
+                    AQ_RC=$?
+                    mkdir -p arch-qube-reports
+                    docker cp arcana-arch-qube:/output/. arch-qube-reports/ 2>/dev/null || true
+                    docker rm -f arcana-arch-qube 2>/dev/null || true
+                    exit $AQ_RC
+                '''
             }
         }
 

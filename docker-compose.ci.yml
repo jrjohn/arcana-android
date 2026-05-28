@@ -10,14 +10,23 @@ services:
       - gradle-cache:/root/.gradle
     command: ./gradlew assembleDebug --no-daemon
 
+  # Unit tests + JaCoCo coverage. NO workspace bind mount: this compose runs
+  # against the HOST docker daemon, so `- .:/project` resolved to a stray host
+  # path the jenkins container can't read — the coverage report.xml never made
+  # it back into the workspace, so SonarQube imported 0% coverage (gate showed
+  # coverage 0.0). Same DinD fix as android-aab/android-release: run against the
+  # baked /project source, then Jenkins pulls reports out with `docker cp`.
+  # The lane runs tests, ALWAYS generates the coverage report (so Sonar can
+  # import it even on a red test run), then re-exits with the test result so a
+  # failing test fails the stage.
   android-test:
     image: localhost:5000/arcana/android-app:${VERSION:-1.0.0}
     volumes:
-      - .:/project
       - gradle-cache:/root/.gradle
     command: >
-      bash -c "./gradlew testDebugUnitTest --no-daemon --continue;
-               ./gradlew createDebugUnitTestCoverageReport --no-daemon || true"
+      bash -c "./gradlew testDebugUnitTest --no-daemon --continue; rc=$$?;
+               ./gradlew createDebugUnitTestCoverageReport --no-daemon || true;
+               exit $$rc"
 
   # fastlane ci: lint + unit tests via fastlane
   android-fastlane:
@@ -41,11 +50,15 @@ services:
     image: localhost:5000/arcana/android-app:${VERSION:-1.0.0}
     volumes:
       - gradle-cache:/root/.gradle
+    # `:-` defaults keep `docker compose run <other-service>` from warning that
+    # these are unset — compose interpolates every service when it parses the
+    # file, even for the build/test lanes that don't use the keystore. The real
+    # values are exported by the "Build Release AAB" stage before it runs.
     environment:
-      - KEYSTORE_B64=${KEYSTORE_B64}
-      - KEY_ALIAS=${KEY_ALIAS}
-      - KEY_PASSWORD=${KEY_PASSWORD}
-      - STORE_PASSWORD=${STORE_PASSWORD}
+      - KEYSTORE_B64=${KEYSTORE_B64:-}
+      - KEY_ALIAS=${KEY_ALIAS:-}
+      - KEY_PASSWORD=${KEY_PASSWORD:-}
+      - STORE_PASSWORD=${STORE_PASSWORD:-}
     command: >
       bash -c "echo \"$$KEYSTORE_B64\" | base64 -d > /project/keystore.jks &&
                KEYSTORE_FILE=/project/keystore.jks bundle exec fastlane bundle_release"
@@ -56,11 +69,15 @@ services:
     image: localhost:5000/arcana/android-app:${VERSION:-1.0.0}
     volumes:
       - gradle-cache:/root/.gradle
+    # `:-` defaults keep `docker compose run <other-service>` from warning that
+    # these are unset — compose interpolates every service when it parses the
+    # file, even for the build/test lanes that don't use the keystore. The real
+    # values are exported by the "Build Release AAB" stage before it runs.
     environment:
-      - KEYSTORE_B64=${KEYSTORE_B64}
-      - KEY_ALIAS=${KEY_ALIAS}
-      - KEY_PASSWORD=${KEY_PASSWORD}
-      - STORE_PASSWORD=${STORE_PASSWORD}
+      - KEYSTORE_B64=${KEYSTORE_B64:-}
+      - KEY_ALIAS=${KEY_ALIAS:-}
+      - KEY_PASSWORD=${KEY_PASSWORD:-}
+      - STORE_PASSWORD=${STORE_PASSWORD:-}
     command: >
       bash -c "echo \"$$KEYSTORE_B64\" | base64 -d > /project/keystore.jks &&
                KEYSTORE_FILE=/project/keystore.jks bundle exec fastlane build_release"
