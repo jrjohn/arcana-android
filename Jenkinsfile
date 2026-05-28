@@ -144,21 +144,22 @@ pipeline {
             // gate is not OK (coverage drop or new-code rating regression).
             steps {
                 withSonarQubeEnv('SonarQube') {
-                    script {
-                        def prArgs = env.CHANGE_ID ? """ \
-                            -Dsonar.pullrequest.key=${env.CHANGE_ID} \
-                            -Dsonar.pullrequest.branch=${env.BRANCH_NAME} \
-                            -Dsonar.pullrequest.base=${env.CHANGE_TARGET}""" : ''
-                        sh """sonar-scanner \
-                          -Dsonar.projectKey=android-app \
-                          -Dsonar.projectName="Android App" \
-                          -Dsonar.sources=. \
-                          -Dsonar.exclusions=**/build/**,**/.gradle/**,**/docs/**,**/test/** \
-                          -Dsonar.java.binaries=. \
-                          -Dsonar.scm.disabled=true \
-                          -Dsonar.coverage.jacoco.xmlReportPaths=app/build/reports/coverage/test/debug/report.xml,app/build/reports/coverage/unit/debug/report.xml \
-                          -Dsonar.coverage.exclusions=**/di/**,**/navigation/**,**/theme/**,**/ui/components/**,buildSrc/**,**/ui/screens/**,**/nav/**,**/NavGraph*,**/worker/**,**/MainActivity*,**/MyApplication*,**/ConnectivityManagerNetworkMonitor*,**/NavigationAnalyticsObserver*,**/AnalyticsManager*,**/SyncManager*${prArgs}"""
-                    }
+                    // NO sonar.pullrequest.* params: this is SonarQube Community Build,
+                    // which rejects them ("Developer Edition or above is required") and
+                    // fails the scan — which is why PR analysis was silently broken until
+                    // the gate became blocking. Analyze with the plain project key on
+                    // every branch and PR; the gate poll below keys off THIS run's
+                    // analysisId, so the OK/ERROR verdict is correct per-analysis even
+                    // though PR and main analyses share one project.
+                    sh """sonar-scanner \
+                      -Dsonar.projectKey=android-app \
+                      -Dsonar.projectName="Android App" \
+                      -Dsonar.sources=. \
+                      -Dsonar.exclusions=**/build/**,**/.gradle/**,**/docs/**,**/test/** \
+                      -Dsonar.java.binaries=. \
+                      -Dsonar.scm.disabled=true \
+                      -Dsonar.coverage.jacoco.xmlReportPaths=app/build/reports/coverage/test/debug/report.xml,app/build/reports/coverage/unit/debug/report.xml \
+                      -Dsonar.coverage.exclusions=**/di/**,**/navigation/**,**/theme/**,**/ui/components/**,buildSrc/**,**/ui/screens/**,**/nav/**,**/NavGraph*,**/worker/**,**/MainActivity*,**/MyApplication*,**/ConnectivityManagerNetworkMonitor*,**/NavigationAnalyticsObserver*,**/AnalyticsManager*,**/SyncManager*"""
                     // waitForQualityGate() needs a server→Jenkins webhook (not
                     // configured here); instead poll the compute-engine task named in
                     // .scannerwork/report-task.txt, then read the gate status. The
