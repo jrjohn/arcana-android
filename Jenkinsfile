@@ -22,6 +22,10 @@ pipeline {
         disableConcurrentBuilds()
         buildDiscarder(logRotator(numToKeepStr: '10'))
         timestamps()
+        // Render ANSI colour codes (gradle/fastlane) in the Jenkins console.
+        // Needs the AnsiColor plugin. NOTE: raw consoleText still contains the
+        // escape codes — log consumers (daily-ci-agent) strip them when parsing.
+        ansiColor('xterm')
     }
 
     parameters {

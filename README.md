@@ -795,6 +795,49 @@ src/test/
 
 ---
 
+## 🚦 CI/CD Quality Gates
+
+The Jenkins multibranch pipeline (`Jenkinsfile`) enforces **real blocking gates** —
+a PR is only "successful" if every gate passes. There is no `catchError(... 'SUCCESS')`
+or `|| true` swallowing failures: a failing test, a coverage drop, a Sonar gate
+regression, or an architecture violation all turn the build **red**.
+
+| Gate | Stage | Fails the build when… |
+|------|-------|-----------------------|
+| **Unit tests** | Unit Tests with Coverage | any `testDebugUnitTest` test fails |
+| **Coverage / SonarQube** | SonarQube Analysis | the SonarQube quality gate is not `OK` (overall coverage < 80% on business logic, or a new-code rating regresses) |
+| **Architecture** | Architecture Qube | `arch-qube` score < 90 (`--threshold 90`) |
+| **Console hygiene** | all stages | zero build warnings (see notes) |
+
+### Notes on the gate implementation
+
+- **DinD-safe data flow.** `docker-compose.ci.yml` talks to the **host** Docker
+  daemon, so bind mounts (`-v $(pwd):…`, `- .:/project`) resolve to stray host
+  paths the Jenkins container can't read. All stages instead copy data in/out with
+  `docker cp` (coverage report, signed AAB, arch-qube source/report) — never bind
+  mounts.
+- **SonarQube Community Build** has no PR analysis (`sonar.pullrequest.*` requires
+  Developer Edition), so the scan uses the plain project key on every branch/PR and
+  the gate is enforced by polling the analysis's quality-gate status via the API.
+- **arm64-native build.** The image builds natively on arm64; only `aapt2` runs
+  x86_64 under qemu. `android.aapt2FromMavenOverride` points AGP at the wrapped
+  aapt2 (its "experimental" warning is silenced via
+  `android.suppressUnsupportedOptionWarnings`).
+- **Coloured console.** The pipeline runs under `ansiColor('xterm')` (AnsiColor
+  plugin) so the Jenkins console renders gradle/fastlane output in colour. The raw
+  `consoleText` still contains the ANSI escape codes, so log consumers (the
+  daily-ci-agent) strip them when parsing. (One known upstream warning remains:
+  Dokka does not yet support AGP 9 — Kotlin/dokka#4256.)
+
+### Verifying a PR meets the bar
+
+`verify-pr.sh` (in the daily-ci-agent toolkit) independently re-checks a PR against
+this bar — build/test SUCCESS, SonarQube gate `OK`, arch-qube score ≥ threshold,
+and that related docs were updated — and prints a scorecard. It is the autonomous
+maintenance agent's "definition of done" before a PR may merge.
+
+---
+
 ## 📊 Analytics
 
 This app includes a **production-ready analytics system** using Aspect-Oriented Programming (AOP):
