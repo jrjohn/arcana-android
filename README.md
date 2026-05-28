@@ -823,13 +823,12 @@ regression, or an architecture violation all turn the build **red**.
   x86_64 under qemu. `android.aapt2FromMavenOverride` points AGP at the wrapped
   aapt2 (its "experimental" warning is silenced via
   `android.suppressUnsupportedOptionWarnings`).
-- **Coloured console.** The pipeline runs under `ansiColor('xterm')` (AnsiColor
-  plugin) and gradle uses `org.gradle.console=verbose` so it emits one cleanly
-  coloured line per task (instead of `rich` mode's progress-bar rewriting, whose
-  `\r`/cursor controls split ANSI escapes and left AnsiColor rendering some lines
-  raw). The raw `consoleText` still contains the escape codes, so log consumers
-  (the daily-ci-agent) strip them when parsing. (One known upstream warning
-  remains: Dokka does not yet support AGP 9 — Kotlin/dokka#4256.)
+- **Clean console.** `org.gradle.console=plain` forces plain-text gradle output.
+  fastlane hands gradle a pseudo-TTY, so without this gradle turns on its `rich`
+  console and floods the Jenkins log with the dynamic progress bar and cursor
+  codes (`│███│ EXECUTING`, `\x1b[2A`, …). `plain` gives one clean line per event,
+  readable by humans and the daily-ci-agent. (One known upstream warning remains:
+  Dokka does not yet support AGP 9 — Kotlin/dokka#4256.)
 
 ### Verifying a PR meets the bar
 
