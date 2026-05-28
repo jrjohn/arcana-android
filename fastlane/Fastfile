@@ -90,6 +90,25 @@ platform :android do
     )
   end
 
+  # Upload an ALREADY-BUILT release AAB to the internal track without rebuilding.
+  # The Jenkins "Deploy to Play (internal)" stage runs this after Build Release AAB
+  # has produced (and docker-cp'd) app/build/outputs/bundle/release/app-release.aab,
+  # so we skip the ~2h qemu re-build that deploy_internal would otherwise do.
+  # Requires the AAB to be signed with the registered Play UPLOAD key (arcana
+  # keystore, SHA1 E2:7E:46…) — the android-keystore credential now holds it.
+  desc "Upload pre-built release AAB to Play Store internal track (no rebuild)"
+  lane :upload_aab_internal do
+    upload_to_play_store(
+      track:                   "internal",
+      aab:                     "app/build/outputs/bundle/release/app-release.aab",
+      release_status:          "draft",
+      skip_upload_metadata:    true,
+      skip_upload_images:      true,
+      skip_upload_screenshots: true,
+      skip_upload_changelogs:  true
+    )
+  end
+
   desc "Promote internal → beta"
   lane :promote_to_beta do
     upload_to_play_store(

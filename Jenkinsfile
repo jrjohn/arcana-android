@@ -24,6 +24,15 @@ pipeline {
         timestamps()
     }
 
+    parameters {
+        // Off by default: Play upload is on-demand, not every main build, because
+        // Play rejects a duplicate versionCode — bump app/build.gradle.kts versionCode
+        // before running a deploy. Tick this in "Build with Parameters" to upload the
+        // freshly-built release AAB to the Play internal track (draft).
+        booleanParam(name: 'DEPLOY_PLAY', defaultValue: false,
+                     description: 'Upload the release AAB to Google Play internal track (draft). main only.')
+    }
+
     environment {
         PROJECT_NAME = "android-app"
         APP_NAME     = "android-app"
@@ -204,6 +213,39 @@ pipeline {
                             mkdir -p app/build/outputs/apk/release
                             docker cp arcana-apk-build:/project/app/build/outputs/apk/release/. app/build/outputs/apk/release/ || true
                             docker rm -f arcana-apk-build 2>/dev/null || true
+                        '''
+                    }
+                }
+            }
+        }
+
+        stage("Deploy to Play (internal)") {
+            // On-demand (DEPLOY_PLAY param) + main only. Uploads the release AAB built
+            // by "Build Release AAB" to the Play internal track as a draft — no rebuild,
+            // reuses the workspace AAB. The AAB is already signed with the registered
+            // Play upload key (arcana keystore via android-keystore credential); this
+            // stage only needs the google-play-key service account to talk to Play.
+            // docker create + docker cp (not bind mounts) to dodge the DinD host-path
+            // problem (see Build Release AAB note).
+            when {
+                allOf {
+                    branch 'main'
+                    expression { params.DEPLOY_PLAY }
+                }
+            }
+            steps {
+                catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
+                    withCredentials([file(credentialsId: 'google-play-key', variable: 'GP_KEY')]) {
+                        sh '''
+                            set -e
+                            docker rm -f arcana-play-deploy 2>/dev/null || true
+                            docker create --name arcana-play-deploy --platform linux/amd64 \
+                                localhost:5000/arcana/android-app:${VERSION:-1.0.0} \
+                                bash -c "mkdir -p app/build/outputs/bundle/release && cp /tmp/app-release.aab app/build/outputs/bundle/release/app-release.aab && bundle exec fastlane upload_aab_internal"
+                            docker cp app/build/outputs/bundle/release/app-release.aab arcana-play-deploy:/tmp/app-release.aab
+                            docker cp "$GP_KEY" arcana-play-deploy:/project/fastlane/google-play-key.json
+                            docker start -a arcana-play-deploy
+                            docker rm -f arcana-play-deploy 2>/dev/null || true
                         '''
                     }
                 }

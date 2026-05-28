@@ -4,6 +4,7 @@
 # Application package name (Android app ID)
 package_name("com.arcana.example")
 
-# Google Play Developer account JSON key (for supply / upload)
-# Uncomment when ready for Play Store automation:
-# json_key_file("fastlane/google-play-key.json")
+# Google Play Developer account JSON key (for supply / upload).
+# Jenkins "Deploy to Play (internal)" stage docker-cp's the google-play-key
+# credential to fastlane/google-play-key.json before running the upload lane.
+json_key_file("fastlane/google-play-key.json")
