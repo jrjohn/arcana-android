@@ -824,10 +824,12 @@ regression, or an architecture violation all turn the build **red**.
   aapt2 (its "experimental" warning is silenced via
   `android.suppressUnsupportedOptionWarnings`).
 - **Coloured console.** The pipeline runs under `ansiColor('xterm')` (AnsiColor
-  plugin) so the Jenkins console renders gradle/fastlane output in colour. The raw
-  `consoleText` still contains the ANSI escape codes, so log consumers (the
-  daily-ci-agent) strip them when parsing. (One known upstream warning remains:
-  Dokka does not yet support AGP 9 — Kotlin/dokka#4256.)
+  plugin) and gradle uses `org.gradle.console=verbose` so it emits one cleanly
+  coloured line per task (instead of `rich` mode's progress-bar rewriting, whose
+  `\r`/cursor controls split ANSI escapes and left AnsiColor rendering some lines
+  raw). The raw `consoleText` still contains the escape codes, so log consumers
+  (the daily-ci-agent) strip them when parsing. (One known upstream warning
+  remains: Dokka does not yet support AGP 9 — Kotlin/dokka#4256.)
 
 ### Verifying a PR meets the bar
 
