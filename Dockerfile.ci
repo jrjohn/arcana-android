@@ -32,6 +32,25 @@ RUN sed -i \
     && mkdir -p /root/.gradle/init.d
 COPY gradle-nexus-init.gradle /root/.gradle/init.d/nexus.gradle
 
+# ── arm64-native build: only aapt2 (x86_64-only) runs under host binfmt-qemu ──
+# This image is built for linux/arm64 (docker-compose.ci.yml build.platforms).
+# The JVM Android toolchain (kotlin, R8, d8/dex, apksigner) runs native arm64;
+# aapt2 is the sole x86_64-only native binary. Install x86_64 glibc via multiarch
+# so qemu can run it, and wrap each build-tools aapt2 to exec through qemu.
+# gradle.properties pins android.aapt2FromMavenOverride to this wrapped aapt2,
+# else AGP downloads its own x86_64 aapt2 → "AAPT2 Daemon startup failed" under
+# qemu. Needs host binfmt qemu-x86_64 (bluesea: qemu-binfmt.service, F flag).
+# ~13x faster than the old full-image qemu build (bundleRelease 136m → ~10m).
+RUN dpkg --add-architecture amd64 && apt-get update \
+    && apt-get install -y --no-install-recommends \
+       libc6:amd64 libstdc++6:amd64 libgcc-s1:amd64 zlib1g:amd64 \
+    && rm -rf /var/lib/apt/lists/* \
+    && for bt in ${ANDROID_HOME}/build-tools/*/aapt2; do \
+         mv "$bt" "$bt.x86"; \
+         printf '#!/bin/sh\nexec "%s.x86" "$@"\n' "$bt" > "$bt"; \
+         chmod +x "$bt"; \
+       done
+
 WORKDIR /project
 COPY . /project/
 

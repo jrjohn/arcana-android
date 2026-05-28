@@ -4,16 +4,14 @@ services:
       context: .
       dockerfile: Dockerfile.ci
       platforms:
-        - linux/amd64
+        - linux/arm64
     image: localhost:5000/arcana/android-app:${VERSION:-1.0.0}
-    platform: linux/amd64
     volumes:
       - gradle-cache:/root/.gradle
     command: ./gradlew assembleDebug --no-daemon
 
   android-test:
     image: localhost:5000/arcana/android-app:${VERSION:-1.0.0}
-    platform: linux/amd64
     volumes:
       - .:/project
       - gradle-cache:/root/.gradle
@@ -24,7 +22,6 @@ services:
   # fastlane ci: lint + unit tests via fastlane
   android-fastlane:
     image: localhost:5000/arcana/android-app:${VERSION:-1.0.0}
-    platform: linux/amd64
     volumes:
       - gradle-cache:/root/.gradle
     command: bundle exec fastlane ci
@@ -42,7 +39,6 @@ services:
   # Validated on bluesea 2026-05-27: BUILD SUCCESSFUL, signReleaseBundle OK.
   android-aab:
     image: localhost:5000/arcana/android-app:${VERSION:-1.0.0}
-    platform: linux/amd64
     volumes:
       - gradle-cache:/root/.gradle
     environment:
@@ -58,7 +54,6 @@ services:
   # android-aab (see note there) — no workspace/keystore bind mount.
   android-release:
     image: localhost:5000/arcana/android-app:${VERSION:-1.0.0}
-    platform: linux/amd64
     volumes:
       - gradle-cache:/root/.gradle
     environment:

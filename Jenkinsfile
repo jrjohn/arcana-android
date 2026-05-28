@@ -217,7 +217,7 @@ pipeline {
                         sh '''
                             set -e
                             docker rm -f arcana-play-deploy 2>/dev/null || true
-                            docker create --name arcana-play-deploy --platform linux/amd64 \
+                            docker create --name arcana-play-deploy \
                                 localhost:5000/arcana/android-app:${VERSION:-1.0.0} \
                                 bash -c "mkdir -p app/build/outputs/bundle/release && cp /tmp/app-release.aab app/build/outputs/bundle/release/app-release.aab && bundle exec fastlane upload_aab_internal"
                             docker cp app/build/outputs/bundle/release/app-release.aab arcana-play-deploy:/tmp/app-release.aab
