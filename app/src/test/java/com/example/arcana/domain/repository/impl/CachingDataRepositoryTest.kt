@@ -8,6 +8,8 @@ import com.example.arcana.domain.repository.DataRepository
 import com.example.arcana.sync.Syncable
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
@@ -366,69 +368,68 @@ class CachingDataRepositoryTest {
     // ========== CacheInvalidationEvent Tests ==========
 
     @Test
-    fun `handleCacheInvalidationEvent UserCreated invalidates page caches`() = runTest {
+    fun `handleCacheInvalidationEvent UserCreated invalidates page caches`() = runTest(UnconfinedTestDispatcher()) {
+        val repo = CachingDataRepository(delegate, cacheEventBus, backgroundScope)
         whenever(delegate.getTotalUserCount()).thenReturn(5)
-        repository.getTotalUserCount() // Populate cache
+        repo.getTotalUserCount() // Populate cache
 
         cacheEventBus.emit(CacheInvalidationEvent.UserCreated(userId = 1))
-
-        // Give coroutine a chance to process
-        Thread.sleep(300)
+        advanceUntilIdle() // run the event collector + handler deterministically
 
         // Cache should be invalidated
-        repository.getTotalUserCount()
+        repo.getTotalUserCount()
         verify(delegate, org.mockito.kotlin.times(2)).getTotalUserCount()
     }
 
     @Test
-    fun `handleCacheInvalidationEvent InvalidateAll clears all caches`() = runTest {
+    fun `handleCacheInvalidationEvent InvalidateAll clears all caches`() = runTest(UnconfinedTestDispatcher()) {
+        val repo = CachingDataRepository(delegate, cacheEventBus, backgroundScope)
         whenever(delegate.getTotalUserCount()).thenReturn(5)
-        repository.getTotalUserCount() // Populate cache
+        repo.getTotalUserCount() // Populate cache
 
         cacheEventBus.emit(CacheInvalidationEvent.InvalidateAll)
+        advanceUntilIdle()
 
-        Thread.sleep(300)
-
-        repository.getTotalUserCount()
+        repo.getTotalUserCount()
         verify(delegate, org.mockito.kotlin.times(2)).getTotalUserCount()
     }
 
     @Test
-    fun `handleCacheInvalidationEvent SyncCompleted invalidates all caches`() = runTest {
+    fun `handleCacheInvalidationEvent SyncCompleted invalidates all caches`() = runTest(UnconfinedTestDispatcher()) {
+        val repo = CachingDataRepository(delegate, cacheEventBus, backgroundScope)
         whenever(delegate.getTotalUserCount()).thenReturn(5)
-        repository.getTotalUserCount()
+        repo.getTotalUserCount()
 
         cacheEventBus.emit(CacheInvalidationEvent.SyncCompleted)
+        advanceUntilIdle()
 
-        Thread.sleep(300)
-
-        repository.getTotalUserCount()
+        repo.getTotalUserCount()
         verify(delegate, org.mockito.kotlin.times(2)).getTotalUserCount()
     }
 
     @Test
-    fun `handleCacheInvalidationEvent UserUpdated invalidates page caches`() = runTest {
+    fun `handleCacheInvalidationEvent UserUpdated invalidates page caches`() = runTest(UnconfinedTestDispatcher()) {
+        val repo = CachingDataRepository(delegate, cacheEventBus, backgroundScope)
         whenever(delegate.getTotalUserCount()).thenReturn(5)
-        repository.getTotalUserCount()
+        repo.getTotalUserCount()
 
         cacheEventBus.emit(CacheInvalidationEvent.UserUpdated(userId = 1))
+        advanceUntilIdle()
 
-        Thread.sleep(300)
-
-        repository.getTotalUserCount()
+        repo.getTotalUserCount()
         verify(delegate, org.mockito.kotlin.times(2)).getTotalUserCount()
     }
 
     @Test
-    fun `handleCacheInvalidationEvent UserDeleted invalidates all caches`() = runTest {
+    fun `handleCacheInvalidationEvent UserDeleted invalidates all caches`() = runTest(UnconfinedTestDispatcher()) {
+        val repo = CachingDataRepository(delegate, cacheEventBus, backgroundScope)
         whenever(delegate.getTotalUserCount()).thenReturn(5)
-        repository.getTotalUserCount()
+        repo.getTotalUserCount()
 
         cacheEventBus.emit(CacheInvalidationEvent.UserDeleted(userId = 1))
+        advanceUntilIdle()
 
-        Thread.sleep(300)
-
-        repository.getTotalUserCount()
+        repo.getTotalUserCount()
         verify(delegate, org.mockito.kotlin.times(2)).getTotalUserCount()
     }
 }

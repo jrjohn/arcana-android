@@ -20,13 +20,19 @@ import javax.inject.Inject
  * Uses LRU cache to store frequently accessed data
  * Listens to cache invalidation events to maintain cache coherency
  */
-class CachingDataRepository @Inject constructor(
+class CachingDataRepository internal constructor(
     private val delegate: DataRepository,
-    private val cacheEventBus: CacheEventBus
+    private val cacheEventBus: CacheEventBus,
+    // Scope for event-bus collection. Injectable so unit tests can supply a
+    // scope tied to runTest's scheduler and assert deterministically, instead
+    // of sleeping for a real-thread Dispatchers.Default collector to catch up.
+    private val scope: CoroutineScope
 ) : DataRepository, Syncable {
 
-    // Coroutine scope for event collection
-    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+    // Production constructor used by Hilt — owns an app-lifetime supervised scope.
+    @Inject
+    constructor(delegate: DataRepository, cacheEventBus: CacheEventBus) :
+        this(delegate, cacheEventBus, CoroutineScope(SupervisorJob() + Dispatchers.Default))
 
     init {
         // Start listening for cache invalidation events
