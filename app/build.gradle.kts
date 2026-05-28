@@ -1,6 +1,8 @@
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
+    // kotlin.android removed: AGP 9.0+ has built-in Kotlin support (applying the
+    // standalone org.jetbrains.kotlin.android plugin now errors). See
+    // https://kotl.in/gradle/agp-built-in-kotlin
     alias(libs.plugins.hilt.android)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.kotlin.compose)
