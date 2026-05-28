@@ -191,33 +191,11 @@ pipeline {
             }
         }
 
-        stage("Build Release APK") {
-            when { branch 'main' }
-            steps {
-                catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
-                    withCredentials([
-                        file(credentialsId: 'android-keystore', variable: 'KEYSTORE_FILE'),
-                        string(credentialsId: 'android-key-alias', variable: 'KEY_ALIAS'),
-                        string(credentialsId: 'android-key-password', variable: 'KEY_PASSWORD'),
-                        string(credentialsId: 'android-store-password', variable: 'STORE_PASSWORD')
-                    ]) {
-                        // Same env-b64 keystore + docker-cp design as Build Release AAB
-                        // (see note there). The signed APK is pulled back out for the
-                        // Verify APK stage / archiving.
-                        sh '''
-                            set -e
-                            docker rm -f arcana-apk-build 2>/dev/null || true
-                            KEYSTORE_B64="$(base64 -w0 "$KEYSTORE_FILE")" \
-                            KEY_ALIAS="$KEY_ALIAS" KEY_PASSWORD="$KEY_PASSWORD" STORE_PASSWORD="$STORE_PASSWORD" \
-                                docker compose -f docker-compose.ci.yml run --name arcana-apk-build android-release
-                            mkdir -p app/build/outputs/apk/release
-                            docker cp arcana-apk-build:/project/app/build/outputs/apk/release/. app/build/outputs/apk/release/ || true
-                            docker rm -f arcana-apk-build 2>/dev/null || true
-                        '''
-                    }
-                }
-            }
-        }
+        // NOTE: "Build Release APK" (assembleRelease) removed 2026-05-28 — Play only
+        // needs the AAB, and assembleRelease was a second ~2h qemu cold build doing the
+        // same compile/R8/dex as bundleRelease. Dropping it cuts the pipeline ~2h. The
+        // build_release fastlane lane + android-release compose service still exist for
+        // manual/local APK builds if ever needed.
 
         stage("Deploy to Play (internal)") {
             // On-demand (DEPLOY_PLAY param) + main only. Uploads the release AAB built
@@ -252,14 +230,14 @@ pipeline {
             }
         }
 
-        stage("Verify APK") {
+        stage("Verify Artifacts") {
             when { branch 'main' }
             steps {
                 sh """
                     echo '=== Debug APK ==='
                     ls -la app/build/outputs/apk/debug/ || echo 'Debug APK not found'
-                    echo '=== Release APK ==='
-                    ls -la app/build/outputs/apk/release/ || echo 'Release APK not found'
+                    echo '=== Release AAB ==='
+                    ls -la app/build/outputs/bundle/release/ || echo 'Release AAB not found'
                 """
             }
         }
