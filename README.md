@@ -2,15 +2,6 @@
 
 > A modern Android application demonstrating **Clean Architecture**, **Offline-First** design, and **AOP Analytics** with Jetpack Compose.
 
-<!-- agent-managed badges START -->
-[![Quality Gate](https://img.shields.io/badge/Quality_Gate-OK-brightgreen)](https://arcana.boo/sonarqube/dashboard?id=android-app)
-[![Build](https://img.shields.io/badge/Build-passing-brightgreen)](https://arcana.boo/jenkins/job/android-app-pipeline-mb/job/main/)
-**Rank**: Quality Gate `OK` · Build `blue` · Sonar coverage `83.5%`
-<!-- agent-managed badges END -->
-<!-- arch-rank START -->
-**Architecture**: arch-qube `100/100` · grade `A+` · `PASS`
-<!-- arch-rank END -->
-
 [![Architecture Rating](https://img.shields.io/badge/Architecture%20Rating-⭐⭐⭐⭐⭐%209.2%2F10-gold.svg)](#-architecture-evaluation)
 [![Grade](https://img.shields.io/badge/Grade-A+-success.svg)](#-architecture-evaluation)
 [![Production Ready](https://img.shields.io/badge/Production-Ready-brightgreen.svg)](#-architecture-evaluation)
@@ -18,6 +9,20 @@
 [![Compose](https://img.shields.io/badge/Jetpack%20Compose-Latest-blue.svg)](https://developer.android.com/jetpack/compose)
 [![Architecture](https://img.shields.io/badge/Architecture-Clean-green.svg)](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
+<!-- agent-managed badges START -->
+<p align="center">
+  <a href="https://arcana.boo/sonarqube/dashboard?id=android-app"><img src="https://img.shields.io/badge/Quality_Gate-OK-brightgreen?style=for-the-badge" alt="Quality Gate"></a>
+  <a href="https://arcana.boo/jenkins/job/android-app-pipeline-mb/job/main/"><img src="https://img.shields.io/badge/Build-passing-brightgreen?style=for-the-badge" alt="Build"></a>
+</p>
+<!-- agent-managed badges END -->
+<!-- arch-rank START -->
+<p align="center">
+  <img src="https://img.shields.io/badge/arch--qube-100%2F100-blue?style=for-the-badge" alt="arch-qube">
+  <img src="https://img.shields.io/badge/Grade-A%2B-brightgreen?style=for-the-badge" alt="Grade">
+  <img src="https://img.shields.io/badge/Arch_Gate-PASS-brightgreen?style=for-the-badge" alt="Architecture Gate">
+</p>
+<!-- arch-rank END -->
 
 ---
 
