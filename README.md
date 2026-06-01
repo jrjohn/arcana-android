@@ -3,7 +3,7 @@
 > A modern Android application demonstrating **Clean Architecture**, **Offline-First** design, and **AOP Analytics** with Jetpack Compose.
 
 <!-- agent-managed badges START -->
-[![Quality Gate](https://arcana.boo/sonarqube/api/project_badges/quality_gate?project=android-app)](https://arcana.boo/sonarqube/dashboard?id=android-app)
+[![Quality Gate](https://img.shields.io/badge/Quality_Gate-OK-brightgreen)](https://arcana.boo/sonarqube/dashboard?id=android-app)
 [![Build](https://arcana.boo/jenkins/buildStatus/icon?job=android-app-pipeline-mb/job/main)](https://arcana.boo/jenkins/job/android-app-pipeline-mb/job/main/)
 **Rank**: Quality Gate `OK` · Build `blue` · Sonar coverage `83.5%`
 <!-- agent-managed badges END -->
