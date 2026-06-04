@@ -86,6 +86,21 @@ android {
     }
 }
 
+// Hilt 2.59.2 (latest) bundles kotlin-metadata-jvm 2.2.20, whose strict reader only
+// accepts Kotlin class metadata up to v2.3.0. ktorfit 2.7.4 ships artifacts compiled
+// with Kotlin 2.4.0 (metadata v2.4.0); when Hilt's @AndroidEntryPoint processor walks
+// those types in :app:hiltJavaCompileDebug it throws "Provided Metadata instance has
+// version 2.4.0, while maximum supported version is 2.3.0". The error's own remedy is
+// to update kotlin-metadata-jvm, so force the 2.4.0 reader onto every classpath that
+// resolves it (the Hilt aggregating annotation-processor path included). Build-time
+// only — kotlin-metadata-jvm is never packaged into the APK. Drop this once a Hilt
+// release bundles kotlin-metadata-jvm >= 2.4.0.
+configurations.all {
+    resolutionStrategy {
+        force("org.jetbrains.kotlin:kotlin-metadata-jvm:${libs.versions.kotlinMetadataJvm.get()}")
+    }
+}
+
 dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
