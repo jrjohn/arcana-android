@@ -58,7 +58,6 @@ pipeline {
             steps {
                 sh '''
                     # Remove dangling/unused images to free disk space
-                    docker image prune -f || true
                     # Keep only last 3 build-tagged images for this app
                     docker images --format '{{.Repository}}:{{.Tag}}' \
                         | grep "${APP_NAME}.*build-" \
@@ -122,14 +121,14 @@ pipeline {
             // can import it in the next stage.
             steps {
                 sh '''
-                    docker rm -f arcana-test-build 2>/dev/null || true
-                    docker compose -f docker-compose.ci.yml run --name arcana-test-build android-test
+                    docker rm -f arcana-test-build-${BUILD_NUMBER} 2>/dev/null || true
+                    docker compose -f docker-compose.ci.yml run --name arcana-test-build-${BUILD_NUMBER} android-test
                     TEST_RC=$?
                     mkdir -p app/build/reports app/build/test-results app/build/outputs
-                    docker cp arcana-test-build:/project/app/build/reports/. app/build/reports/ 2>/dev/null || true
-                    docker cp arcana-test-build:/project/app/build/test-results/. app/build/test-results/ 2>/dev/null || true
-                    docker cp arcana-test-build:/project/app/build/outputs/. app/build/outputs/ 2>/dev/null || true
-                    docker rm -f arcana-test-build 2>/dev/null || true
+                    docker cp arcana-test-build-${BUILD_NUMBER}:/project/app/build/reports/. app/build/reports/ 2>/dev/null || true
+                    docker cp arcana-test-build-${BUILD_NUMBER}:/project/app/build/test-results/. app/build/test-results/ 2>/dev/null || true
+                    docker cp arcana-test-build-${BUILD_NUMBER}:/project/app/build/outputs/. app/build/outputs/ 2>/dev/null || true
+                    docker rm -f arcana-test-build-${BUILD_NUMBER} 2>/dev/null || true
                     exit $TEST_RC
                 '''
             }
@@ -231,14 +230,14 @@ pipeline {
                         // pulled back with `docker cp` (CLI-side copy, no path mount).
                         sh '''
                             set -e
-                            docker rm -f arcana-aab-build 2>/dev/null || true
+                            docker rm -f arcana-aab-build-${BUILD_NUMBER} 2>/dev/null || true
                             KEYSTORE_B64="$(base64 -w0 "$KEYSTORE_FILE")" \
                             KEY_ALIAS="$KEY_ALIAS" KEY_PASSWORD="$KEY_PASSWORD" STORE_PASSWORD="$STORE_PASSWORD" \
-                                docker compose -f docker-compose.ci.yml run --name arcana-aab-build android-aab
+                                docker compose -f docker-compose.ci.yml run --name arcana-aab-build-${BUILD_NUMBER} android-aab
                             mkdir -p app/build/outputs/bundle/release app/build/outputs/mapping/release
-                            docker cp arcana-aab-build:/project/app/build/outputs/bundle/release/. app/build/outputs/bundle/release/ || true
-                            docker cp arcana-aab-build:/project/app/build/outputs/mapping/release/mapping.txt app/build/outputs/mapping/release/ || true
-                            docker rm -f arcana-aab-build 2>/dev/null || true
+                            docker cp arcana-aab-build-${BUILD_NUMBER}:/project/app/build/outputs/bundle/release/. app/build/outputs/bundle/release/ || true
+                            docker cp arcana-aab-build-${BUILD_NUMBER}:/project/app/build/outputs/mapping/release/mapping.txt app/build/outputs/mapping/release/ || true
+                            docker rm -f arcana-aab-build-${BUILD_NUMBER} 2>/dev/null || true
                         '''
                     }
                 }
@@ -275,14 +274,14 @@ pipeline {
                     withCredentials([file(credentialsId: 'google-play-key', variable: 'GP_KEY')]) {
                         sh '''
                             set -e
-                            docker rm -f arcana-play-deploy 2>/dev/null || true
-                            docker create --name arcana-play-deploy \
+                            docker rm -f arcana-play-deploy-${BUILD_NUMBER} 2>/dev/null || true
+                            docker create --name arcana-play-deploy-${BUILD_NUMBER} \
                                 localhost:5000/arcana/android-app:${VERSION:-1.0.0} \
                                 bash -c "mkdir -p app/build/outputs/bundle/release && cp /tmp/app-release.aab app/build/outputs/bundle/release/app-release.aab && bundle exec fastlane upload_aab_internal"
-                            docker cp app/build/outputs/bundle/release/app-release.aab arcana-play-deploy:/tmp/app-release.aab
-                            docker cp "$GP_KEY" arcana-play-deploy:/project/fastlane/google-play-key.json
-                            docker start -a arcana-play-deploy
-                            docker rm -f arcana-play-deploy 2>/dev/null || true
+                            docker cp app/build/outputs/bundle/release/app-release.aab arcana-play-deploy-${BUILD_NUMBER}:/tmp/app-release.aab
+                            docker cp "$GP_KEY" arcana-play-deploy-${BUILD_NUMBER}:/project/fastlane/google-play-key.json
+                            docker start -a arcana-play-deploy-${BUILD_NUMBER}
+                            docker rm -f arcana-play-deploy-${BUILD_NUMBER} 2>/dev/null || true
                         '''
                     }
                 }
@@ -309,8 +308,8 @@ pipeline {
             // through anonymous volumes (/src, /output) that exist for the container.
             steps {
                 sh '''
-                    docker rm -f arcana-arch-qube 2>/dev/null || true
-                    docker create --name arcana-arch-qube --network devops_default \
+                    docker rm -f arcana-arch-qube-android-${BUILD_NUMBER} 2>/dev/null || true
+                    docker create --name arcana-arch-qube-android-${BUILD_NUMBER} --network devops_default \
                         -v /src -v /output \
                         arcana.boo/arcana/arch-qube:latest \
                         scan /src --framework android --no-ai --ci \
@@ -318,12 +317,12 @@ pipeline {
                     tar --exclude=./.git --exclude=./app/build --exclude=./build \
                         --exclude=./.gradle --exclude=./.scannerwork \
                         --exclude=./arch-qube-reports -C . -cf - . \
-                        | docker cp - arcana-arch-qube:/src || exit 1
-                    docker start -a arcana-arch-qube
+                        | docker cp - arcana-arch-qube-android-${BUILD_NUMBER}:/src || exit 1
+                    docker start -a arcana-arch-qube-android-${BUILD_NUMBER}
                     AQ_RC=$?
                     mkdir -p arch-qube-reports
-                    docker cp arcana-arch-qube:/output/. arch-qube-reports/ 2>/dev/null || true
-                    docker rm -f arcana-arch-qube 2>/dev/null || true
+                    docker cp arcana-arch-qube-android-${BUILD_NUMBER}:/output/. arch-qube-reports/ 2>/dev/null || true
+                    docker rm -f arcana-arch-qube-android-${BUILD_NUMBER} 2>/dev/null || true
                     exit $AQ_RC
                 '''
             }
