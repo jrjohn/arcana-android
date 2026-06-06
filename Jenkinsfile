@@ -72,8 +72,16 @@ pipeline {
         }
 
         stage("Docker Compose Build") {
+            // Build under a UNIQUE :build-N tag, then derive :1.0.0 from it via
+            // `docker tag`. Exporting the static :1.0.0 directly fails with
+            // `image "...android-app:1.0.0": already exists` (#78) — buildkit's
+            // containerd image store refuses to re-export an existing tag, and
+            // Cleanup Old Images only rotates build-N images so the prior :1.0.0
+            // lingers. A unique build-N export never collides; `docker tag` is a
+            // metadata reassign that overwrites freely. Mirrors arcana-cloud-rust.
             steps {
-                sh "docker compose -f docker-compose.ci.yml build"
+                sh "VERSION=build-${BUILD_NUMBER} docker compose -f docker-compose.ci.yml build"
+                sh "docker tag localhost:5000/arcana/android-app:build-${BUILD_NUMBER} localhost:5000/arcana/android-app:1.0.0"
             }
         }
 
