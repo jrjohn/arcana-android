@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.1](https://github.com/jrjohn/arcana-android/compare/v1.1.0...v1.1.1) (2026-06-12)
+
+
+### Bug Fixes
+
+* **deps:** update ktorfit to v2.7.5 ([#20](https://github.com/jrjohn/arcana-android/issues/20)) ([00c27f7](https://github.com/jrjohn/arcana-android/commit/00c27f754af18e570a995ef7457330fdc83c143e))
+
 ## [1.1.0](https://github.com/jrjohn/arcana-android/compare/v1.0.0...v1.1.0) (2026-06-12)
 
 
