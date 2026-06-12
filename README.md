@@ -438,7 +438,7 @@ fun UserDialog(
 ### Core Technologies
 | Category | Technology | Purpose |
 |----------|-----------|---------|
-| **Language** | Kotlin 1.9+ | Modern, concise, safe |
+| **Language** | Kotlin 2.3+ | Modern, concise, safe |
 | **UI Framework** | Jetpack Compose | Declarative UI |
 | **Architecture** | Clean Architecture + MVVM | Maintainable, testable |
 | **Async** | Coroutines + Flow | Reactive programming |
