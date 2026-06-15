@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.1.6](https://github.com/jrjohn/arcana-android/compare/v1.1.5...v1.1.6) (2026-06-15)
+
+
+### Bug Fixes
+
+* **deps:** update kotlin monorepo to v2.4.0 ([#31](https://github.com/jrjohn/arcana-android/issues/31)) ([4f4a797](https://github.com/jrjohn/arcana-android/commit/4f4a79749806e4b7f2b66404beca2579d758a2ea))
+* **deps:** update ktor monorepo to v3.5.0 ([#34](https://github.com/jrjohn/arcana-android/issues/34)) ([3c819c9](https://github.com/jrjohn/arcana-android/commit/3c819c9bd2bbcc8be9793e00c7c8bab2018396a9))
+
 ## [1.1.5](https://github.com/jrjohn/arcana-android/compare/v1.1.4...v1.1.5) (2026-06-15)
 
 
