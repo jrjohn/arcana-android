@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.5](https://github.com/jrjohn/arcana-android/compare/v1.1.4...v1.1.5) (2026-06-15)
+
+
+### Bug Fixes
+
+* **deps:** update kotlinx-coroutines monorepo to v1.11.0 ([#32](https://github.com/jrjohn/arcana-android/issues/32)) ([57a466f](https://github.com/jrjohn/arcana-android/commit/57a466f904e382ce8a34bbd49cb7ef6b053dc324))
+
 ## [1.1.4](https://github.com/jrjohn/arcana-android/compare/v1.1.3...v1.1.4) (2026-06-15)
 
 
