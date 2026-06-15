@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.4](https://github.com/jrjohn/arcana-android/compare/v1.1.3...v1.1.4) (2026-06-15)
+
+
+### Bug Fixes
+
+* **deps:** update dependency org.yaml:snakeyaml to v2.6 ([#28](https://github.com/jrjohn/arcana-android/issues/28)) ([86d15e2](https://github.com/jrjohn/arcana-android/commit/86d15e203823f86c1a913aa96c839275c1a187a6))
+
 ## [1.1.3](https://github.com/jrjohn/arcana-android/compare/v1.1.2...v1.1.3) (2026-06-15)
 
 
