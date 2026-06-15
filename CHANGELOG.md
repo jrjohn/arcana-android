@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.3](https://github.com/jrjohn/arcana-android/compare/v1.1.2...v1.1.3) (2026-06-15)
+
+
+### Bug Fixes
+
+* **deps:** update core.ktx to v1.19.0 ([#27](https://github.com/jrjohn/arcana-android/issues/27)) ([7086b45](https://github.com/jrjohn/arcana-android/commit/7086b45854444d3cb63f3f1f3f631d7343b9558f))
+
 ## [1.1.2](https://github.com/jrjohn/arcana-android/compare/v1.1.1...v1.1.2) (2026-06-14)
 
 
