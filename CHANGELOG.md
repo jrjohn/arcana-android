@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.9](https://github.com/jrjohn/arcana-android/compare/v1.1.8...v1.1.9) (2026-06-17)
+
+
+### Bug Fixes
+
+* **deps:** update mockito.kotlin to v6.3.0 ([#41](https://github.com/jrjohn/arcana-android/issues/41)) ([5a24fd7](https://github.com/jrjohn/arcana-android/commit/5a24fd77201331e9bdba1444909adb3013fae98b))
+
 ## [1.1.8](https://github.com/jrjohn/arcana-android/compare/v1.1.7...v1.1.8) (2026-06-16)
 
 
