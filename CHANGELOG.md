@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.1.8](https://github.com/jrjohn/arcana-android/compare/v1.1.7...v1.1.8) (2026-06-16)
+
+
+### Bug Fixes
+
+* **deps:** update material to v1.14.0 ([#37](https://github.com/jrjohn/arcana-android/issues/37)) ([8340d47](https://github.com/jrjohn/arcana-android/commit/8340d4736bc69b474be09488616975e109eb1d14))
+* **deps:** update mockito monorepo to v5.23.0 ([#39](https://github.com/jrjohn/arcana-android/issues/39)) ([ed34ed6](https://github.com/jrjohn/arcana-android/commit/ed34ed69692c3ef7003fdfb64a7e353e915a4602))
+
 ## [1.1.7](https://github.com/jrjohn/arcana-android/compare/v1.1.6...v1.1.7) (2026-06-16)
 
 
