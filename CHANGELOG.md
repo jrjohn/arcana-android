@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.11](https://github.com/jrjohn/arcana-android/compare/v1.1.10...v1.1.11) (2026-06-18)
+
+
+### Bug Fixes
+
+* **deps:** update compose.bom to v2026.06.00 ([#43](https://github.com/jrjohn/arcana-android/issues/43)) ([c55148c](https://github.com/jrjohn/arcana-android/commit/c55148cbdf505c2acbfadb4cb8e042396fa16bb0))
+
 ## [1.1.10](https://github.com/jrjohn/arcana-android/compare/v1.1.9...v1.1.10) (2026-06-17)
 
 
