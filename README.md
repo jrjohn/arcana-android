@@ -9,7 +9,7 @@
 [![Compose](https://img.shields.io/badge/Jetpack%20Compose-Latest-blue.svg)](https://developer.android.com/jetpack/compose)
 [![AGP](https://img.shields.io/badge/AGP-9.2-green.svg)](https://developer.android.com/build/releases/gradle-plugin)
 [![compileSdk](https://img.shields.io/badge/compileSdk-37-brightgreen.svg)](https://developer.android.com/tools/releases/platforms)
-[![Gradle](https://img.shields.io/badge/Gradle-9.5-blue.svg)](https://gradle.org/releases/)
+[![Gradle](https://img.shields.io/badge/Gradle-9.6-blue.svg)](https://gradle.org/releases/)
 [![Architecture](https://img.shields.io/badge/Architecture-Clean-green.svg)](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
@@ -481,7 +481,7 @@ fun UserDialog(
 ### Build System
 | Category | Technology | Purpose |
 |----------|-----------|---------|
-| **Build Tool** | Gradle 9.5 (Kotlin DSL) | Build automation |
+| **Build Tool** | Gradle 9.6 (Kotlin DSL) | Build automation |
 | **Android Gradle Plugin** | AGP 9.2 | Android build toolchain |
 | **compileSdk** | 37 | Compile-time Android API level |
 | **targetSdk / minSdk** | 36 / 28 | Runtime target / minimum API |
@@ -495,7 +495,7 @@ fun UserDialog(
 - **Android Studio** Hedgehog (2023.1.1) or later
 - **JDK** 17 or higher
 - **Android SDK** 28+ (compileSdk 37, targetSdk 36)
-- **Gradle** 9.5+
+- **Gradle** 9.6+
 
 ### Quick Start
 
