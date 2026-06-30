@@ -41,7 +41,20 @@ COPY gradle-nexus-init.gradle /root/.gradle/init.d/nexus.gradle
 # else AGP downloads its own x86_64 aapt2 → "AAPT2 Daemon startup failed" under
 # qemu. Needs host binfmt qemu-x86_64 (bluesea: qemu-binfmt.service, F flag).
 # ~13x faster than the old full-image qemu build (bundleRelease 136m → ~10m).
-RUN dpkg --add-architecture amd64 && apt-get update \
+# On linux/arm64 the base apt sources point at ports.ubuntu.com/ubuntu-ports, which
+# carries NO amd64 packages, so after `dpkg --add-architecture amd64` a plain
+# `apt-get update` 404s on .../binary-amd64/Packages. Below we pin the native sources
+# to arm64 and add a parallel amd64 source from archive.ubuntu.com (which DOES carry
+# amd64), reusing the suites/components/signed-by from the native source verbatim.
+RUN dpkg --add-architecture amd64 \
+    && for s in /etc/apt/sources.list.d/*.sources; do \
+         [ -e "$s" ] || continue; \
+         grep -q '^Architectures:' "$s" || sed -i 's|^\(Types:.*\)|\1\nArchitectures: arm64|' "$s"; \
+         amd="${s%.sources}-amd64.sources"; \
+         sed -e 's|ports.ubuntu.com/ubuntu-ports|archive.ubuntu.com/ubuntu|g' \
+             -e 's|^Architectures: arm64|Architectures: amd64|' "$s" > "$amd"; \
+       done \
+    && apt-get update \
     && apt-get install -y --no-install-recommends \
        libc6:amd64 libstdc++6:amd64 libgcc-s1:amd64 zlib1g:amd64 \
     && rm -rf /var/lib/apt/lists/* \
