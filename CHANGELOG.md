@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.1.12](https://github.com/jrjohn/arcana-android/compare/v1.1.11...v1.1.12) (2026-06-30)
+
+
+### Bug Fixes
+
+* **ci:** repair amd64 multiarch apt source on arm64 android build image ([c68ce18](https://github.com/jrjohn/arcana-android/commit/c68ce18b13567849d770dafcafa6fa3d14fdf954))
+* **deps:** update hilt to v2.60 ([#49](https://github.com/jrjohn/arcana-android/issues/49)) ([d33d666](https://github.com/jrjohn/arcana-android/commit/d33d666ff13b29eb0f5b32524ca12b2ac764884c))
+* **deps:** update ktor monorepo to v3.5.1 ([#48](https://github.com/jrjohn/arcana-android/issues/48)) ([df937ce](https://github.com/jrjohn/arcana-android/commit/df937ceb37eb9cfa88110cdd205c62083aa0b0b8))
+
 ## [1.1.11](https://github.com/jrjohn/arcana-android/compare/v1.1.10...v1.1.11) (2026-06-18)
 
 
