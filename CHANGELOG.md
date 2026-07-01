@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.13](https://github.com/jrjohn/arcana-android/compare/v1.1.12...v1.1.13) (2026-07-01)
+
+
+### Bug Fixes
+
+* **deps:** update dependency androidx.compose:compose-bom to v2026.06.01 ([#52](https://github.com/jrjohn/arcana-android/issues/52)) ([27eda09](https://github.com/jrjohn/arcana-android/commit/27eda0916f853db3171d8a26d8c0f52795b54ccf))
+
 ## [1.1.12](https://github.com/jrjohn/arcana-android/compare/v1.1.11...v1.1.12) (2026-06-30)
 
 
