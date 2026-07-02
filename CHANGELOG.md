@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.1.14](https://github.com/jrjohn/arcana-android/compare/v1.1.13...v1.1.14) (2026-07-02)
+
+
+### Bug Fixes
+
+* **deps:** update dependency androidx.hilt:hilt-navigation-compose to v1.4.0 ([#53](https://github.com/jrjohn/arcana-android/issues/53)) ([b078354](https://github.com/jrjohn/arcana-android/commit/b078354b1e633525be732e8fd8f9c1ff88bc74e2))
+* **deps:** update hilt.work to v1.4.0 ([#55](https://github.com/jrjohn/arcana-android/issues/55)) ([f2d7380](https://github.com/jrjohn/arcana-android/commit/f2d7380b0850817374b021db41bf66caad7492ad))
+
 ## [1.1.13](https://github.com/jrjohn/arcana-android/compare/v1.1.12...v1.1.13) (2026-07-01)
 
 
