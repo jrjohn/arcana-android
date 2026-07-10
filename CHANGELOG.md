@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.15](https://github.com/jrjohn/arcana-android/compare/v1.1.14...v1.1.15) (2026-07-09)
+
+
+### Bug Fixes
+
+* **deps:** update hilt to v2.60.1 ([#57](https://github.com/jrjohn/arcana-android/issues/57)) ([343abeb](https://github.com/jrjohn/arcana-android/commit/343abeb2532785b4e51a04770c2f10aaf7ee5ef8))
+
 ## [1.1.14](https://github.com/jrjohn/arcana-android/compare/v1.1.13...v1.1.14) (2026-07-02)
 
 
