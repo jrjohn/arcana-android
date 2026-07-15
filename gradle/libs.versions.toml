@@ -1,5 +1,5 @@
 [versions]
-android-gradle-plugin = "9.2.1"
+android-gradle-plugin = "9.3.0"
 kotlin = "2.3.21"
 # Hilt 2.59.2 (latest) bundles kotlin-metadata-jvm 2.2.20, which reads Kotlin
 # class metadata only up to v2.3.0. ktorfit 2.7.4 ships artifacts compiled with
