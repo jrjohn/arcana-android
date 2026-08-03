@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.17](https://github.com/jrjohn/arcana-android/compare/v1.1.16...v1.1.17) (2026-08-03)
+
+
+### Bug Fixes
+
+* **deps:** update ktor monorepo to v3.5.2 ([#66](https://github.com/jrjohn/arcana-android/issues/66)) ([76833f7](https://github.com/jrjohn/arcana-android/commit/76833f716a6e294d54f77b45c1cbde8ee1e0d5b9))
+
 ## [1.1.16](https://github.com/jrjohn/arcana-android/compare/v1.1.15...v1.1.16) (2026-07-15)
 
 
