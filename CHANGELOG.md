@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.1.18](https://github.com/jrjohn/arcana-android/compare/v1.1.17...v1.1.18) (2026-08-13)
+
+
+### Bug Fixes
+
+* **deps:** update dependency androidx.appcompat:appcompat to v1.8.0 ([#73](https://github.com/jrjohn/arcana-android/issues/73)) ([67584d0](https://github.com/jrjohn/arcana-android/commit/67584d006b340bdbb9e91f19208c8c630af2a6d3))
+* **deps:** update dependency androidx.compose:compose-bom to v2026.08.00 ([#74](https://github.com/jrjohn/arcana-android/issues/74)) ([cec96ad](https://github.com/jrjohn/arcana-android/commit/cec96ad72403f856a3d9c9bca4a6929117ff0d2d))
+
 ## [1.1.17](https://github.com/jrjohn/arcana-android/compare/v1.1.16...v1.1.17) (2026-08-03)
 
 
