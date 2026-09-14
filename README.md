@@ -441,7 +441,7 @@ fun UserDialog(
 ### Core Technologies
 | Category | Technology | Purpose |
 |----------|-----------|---------|
-| **Language** | Kotlin 2.3+ | Modern, concise, safe |
+| **Language** | Kotlin 2.4+ | Modern, concise, safe |
 | **UI Framework** | Jetpack Compose | Declarative UI |
 | **Architecture** | Clean Architecture + MVVM | Maintainable, testable |
 | **Async** | Coroutines + Flow | Reactive programming |
@@ -481,7 +481,7 @@ fun UserDialog(
 ### Build System
 | Category | Technology | Purpose |
 |----------|-----------|---------|
-| **Build Tool** | Gradle 9.6 (Kotlin DSL) | Build automation |
+| **Build Tool** | Gradle 9.7 (Kotlin DSL) | Build automation |
 | **Android Gradle Plugin** | AGP 9.3 | Android build toolchain |
 | **compileSdk** | 37 | Compile-time Android API level |
 | **targetSdk / minSdk** | 36 / 28 | Runtime target / minimum API |
@@ -495,7 +495,7 @@ fun UserDialog(
 - **Android Studio** Hedgehog (2023.1.1) or later
 - **JDK** 17 or higher
 - **Android SDK** 28+ (compileSdk 37, targetSdk 36)
-- **Gradle** 9.6+
+- **Gradle** 9.7+
 
 ### Quick Start
 
