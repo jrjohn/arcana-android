@@ -13,6 +13,18 @@ pipeline {
     agent any
 
     options {
+        // Serialize ALL android builds (every branch + PR) on the shared CI host.
+        // disableConcurrentBuilds() below is per-branch only; on 2026-09-14 three
+        // android builds overlapped (two Gradle containers ~4.9 GB + ~3.4 GB) and the
+        // host ran out of RAM (swap full, load 141), Jenkins went unhealthy and PR-76 was
+        // OOM-killed (exit 137). Same pattern as springboot's lock('ci-springboot-build').
+        // lock MUST stay BEFORE timeout: declarative nests options in order, so the
+        // timeout starts only after the lock is acquired and waiting for another android
+        // build (a main release build can take ~6.5h) never counts toward the 540 min.
+        // Verified on this Jenkins with two throwaway jobs: lock-wait + 40s work = 81s
+        // under a 1-minute timeout -> SUCCESS; the log shows "Lock acquired" before
+        // "Timeout set to expire".
+        lock('ci-android-build')
         // 9h. The amd64 release builds run under qemu (no native arm64 aapt2/d8),
         // so Build Release AAB (bundleRelease ~136m) + Build Release APK
         // (assembleRelease ~120m) plus ~123m of earlier stages legitimately need
