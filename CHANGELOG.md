@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.1.19](https://github.com/jrjohn/arcana-android/compare/v1.1.18...v1.1.19) (2026-09-14)
+
+
+### Bug Fixes
+
+* **deps:** update dependency org.jetbrains.kotlin.plugin.serialization to v2.4.20 ([#76](https://github.com/jrjohn/arcana-android/issues/76)) ([c6f3a88](https://github.com/jrjohn/arcana-android/commit/c6f3a885d9b615ae90a32a5bab3607f9264434d0))
+* **deps:** update eclipse-temurin docker tag to v26.0.2_10-jdk ([#77](https://github.com/jrjohn/arcana-android/issues/77)) ([9ddf165](https://github.com/jrjohn/arcana-android/commit/9ddf165d1b82c93ceb31a93c9dc4d2281ad46537))
+
 ## [1.1.18](https://github.com/jrjohn/arcana-android/compare/v1.1.17...v1.1.18) (2026-08-13)
 
 
