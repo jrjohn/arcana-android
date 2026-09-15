@@ -9,7 +9,7 @@
 [![Compose](https://img.shields.io/badge/Jetpack%20Compose-Latest-blue.svg)](https://developer.android.com/jetpack/compose)
 [![AGP](https://img.shields.io/badge/dynamic/toml?url=https://raw.githubusercontent.com/jrjohn/arcana-android/main/gradle/libs.versions.toml&query=%24.versions%5B%27android-gradle-plugin%27%5D&label=AGP&color=green)](https://developer.android.com/build/releases/gradle-plugin)
 [![compileSdk](https://img.shields.io/badge/compileSdk-37-brightgreen.svg)](https://developer.android.com/tools/releases/platforms)
-[![Gradle](https://img.shields.io/badge/Gradle-9.7.0-blue.svg)](https://gradle.org/releases/)
+[![Gradle](https://img.shields.io/badge/Gradle-9.7-blue.svg)](https://gradle.org/releases/)
 [![Architecture](https://img.shields.io/badge/Architecture-Clean-green.svg)](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
