@@ -10,7 +10,11 @@
 //   * SonarQube gets pullrequest.* params on PRs       — PR-decoration in Sonar UI
 
 pipeline {
-    agent any
+    // agent none at the top on purpose: the executor is taken by the "Android CI" wrapper
+    // stage below, i.e. only AFTER lock('ci-android-build') is acquired. With `agent any`
+    // here, a build waiting for the lock sat on one of the two Built-In executors doing
+    // nothing (2026-09-15: main #146 idled behind PR-82 while 8 other repos queued).
+    agent none
 
     options {
         // Serialize ALL android builds (every branch + PR) on the shared CI host.
@@ -21,6 +25,7 @@ pipeline {
         // lock MUST stay BEFORE timeout: declarative nests options in order, so the
         // timeout starts only after the lock is acquired and waiting for another android
         // build (a main release build can take ~6.5h) never counts toward the 540 min.
+        // Lock-wait also holds no executor: the node is allocated inside the lock (see agent).
         // Verified on this Jenkins with two throwaway jobs: lock-wait + 40s work = 81s
         // under a 1-minute timeout -> SUCCESS; the log shows "Lock acquired" before
         // "Timeout set to expire".
@@ -55,6 +60,10 @@ pipeline {
     }
 
     stages {
+      stage("Android CI") {
+        // Single executor for the whole build, allocated inside the lock (top-level agent none).
+        agent any
+        stages {
         stage("Checkout") {
             steps {
                 checkout scm
@@ -356,23 +365,25 @@ pipeline {
                 }
             }
         }
-    }
-
-    post {
-        success {
-            echo "Android build SUCCESS: ${PROJECT_NAME} branch=${env.BRANCH_NAME ?: '?'} pr=${env.CHANGE_ID ?: 'no'}"
-            sh '''
-                # self-clean: keep only THIS build's image locally; previous
-                # build-N tags stay pullable from the registry
-                docker images --format '{{.Repository}}:{{.Tag}}' \
-                    | grep -E "^localhost:5000/arcana/android-app:build-[0-9]+$" \
-                    | grep -v ":build-${BUILD_NUMBER}$" \
-                    | xargs -r docker rmi 2>/dev/null || true
-            '''
         }
-        failure { echo "Android build FAILED: ${PROJECT_NAME} branch=${env.BRANCH_NAME ?: '?'} pr=${env.CHANGE_ID ?: 'no'}" }
-        always {
-            sh "docker compose -f docker-compose.ci.yml down --remove-orphans || true"
-        }
+      // post runs on the stage's executor (its sh steps need a node; top-level has none)
+      post {
+          success {
+              echo "Android build SUCCESS: ${PROJECT_NAME} branch=${env.BRANCH_NAME ?: '?'} pr=${env.CHANGE_ID ?: 'no'}"
+              sh '''
+                  # self-clean: keep only THIS build's image locally; previous
+                  # build-N tags stay pullable from the registry
+                  docker images --format '{{.Repository}}:{{.Tag}}' \
+                      | grep -E "^localhost:5000/arcana/android-app:build-[0-9]+$" \
+                      | grep -v ":build-${BUILD_NUMBER}$" \
+                      | xargs -r docker rmi 2>/dev/null || true
+              '''
+          }
+          failure { echo "Android build FAILED: ${PROJECT_NAME} branch=${env.BRANCH_NAME ?: '?'} pr=${env.CHANGE_ID ?: 'no'}" }
+          always {
+              sh "docker compose -f docker-compose.ci.yml down --remove-orphans || true"
+          }
+      }
+      }
     }
 }
