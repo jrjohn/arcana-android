@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.1.22](https://github.com/jrjohn/arcana-android/compare/v1.1.21...v1.1.22) (2026-09-16)
+
+
+### Bug Fixes
+
+* **deps:** update dependency androidx.compose:compose-bom to v2026.09.00 ([#88](https://github.com/jrjohn/arcana-android/issues/88)) ([4d39d9a](https://github.com/jrjohn/arcana-android/commit/4d39d9ae4b7fbe00f8215a5a04974368d3f90a7d))
+* **deps:** update room to v2.8.5 ([#87](https://github.com/jrjohn/arcana-android/issues/87)) ([3ad887a](https://github.com/jrjohn/arcana-android/commit/3ad887a6cda384ae0e6b458d331846cbcae68134))
+
 ## [1.1.21](https://github.com/jrjohn/arcana-android/compare/v1.1.20...v1.1.21) (2026-09-15)
 
 
