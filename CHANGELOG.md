@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.1.25](https://github.com/jrjohn/arcana-android/compare/v1.1.24...v1.1.25) (2026-09-21)
+
+
+### Bug Fixes
+
+* **deps:** update dependency com.android.application to v9.4.1 ([#96](https://github.com/jrjohn/arcana-android/issues/96)) ([456c20e](https://github.com/jrjohn/arcana-android/commit/456c20e69f2c4b117714c9828ac7a84d189fa3dc))
+* **deps:** update ktor monorepo to v3.6.0 ([#94](https://github.com/jrjohn/arcana-android/issues/94)) ([bb33c1e](https://github.com/jrjohn/arcana-android/commit/bb33c1ea78fc22a2319464bfd2d0fe7c0d0302b2))
+
 ## [1.1.24](https://github.com/jrjohn/arcana-android/compare/v1.1.23...v1.1.24) (2026-09-19)
 
 
