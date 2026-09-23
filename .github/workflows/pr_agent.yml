@@ -3,9 +3,20 @@ on:
   pull_request:
     types: [opened, reopened, ready_for_review, synchronize]
   issue_comment:
+    types: [created]
 jobs:
   pr_agent_job:
-    if: ${{ github.event.sender.type != 'Bot' }}
+    # Comments only count when they are pr-agent commands (/review, /describe, /improve…).
+    # Without this, any human-token comment ran pr-agent with its first word as a command —
+    # e.g. "Closing: …" -> "Unknown command: closing" -> a red run + failure email.
+    # Skip Renovate dependency bumps and release-please PRs: they were 97% of runs
+    # (181 + 20 of 208 in 30 days) and a version bump gives the reviewer nothing to review;
+    # Jenkins build/tests/Sonar are the real gate there. A "/review" comment still works on them.
+    if: >-
+      ${{ github.event.sender.type != 'Bot'
+          && !startsWith(github.head_ref, 'renovate/')
+          && !startsWith(github.head_ref, 'release-please--')
+          && (github.event_name != 'issue_comment' || startsWith(github.event.comment.body, '/')) }}
     runs-on: ubuntu-latest
     permissions:
       issues: write
@@ -18,8 +29,12 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GOOGLE_AI_STUDIO.GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          config.model: "gemini/gemini-2.0-flash-001"
-          config.fallback_models: '["gemini/gemini-2.5-flash"]'
+          # gemini-2.0-flash-001 was shut down on 2026-06-01 and gemini-2.5-flash is being
+          # retired (shutdown 2026-10-16), so every model call failed and describe/review/improve
+          # all silently produced nothing. gemini-flash-latest follows Google's current stable
+          # Flash, so a retirement no longer takes the reviewer down.
+          config.model: "gemini/gemini-flash-latest"
+          config.fallback_models: '["gemini/gemini-3.5-flash-lite"]'
           config.custom_model_max_tokens: "32000"
           github_action_config.auto_review: "true"
           github_action_config.auto_describe: "true"
