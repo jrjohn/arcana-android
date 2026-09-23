@@ -39,3 +39,8 @@ jobs:
           github_action_config.auto_review: "true"
           github_action_config.auto_describe: "true"
           github_action_config.auto_improve: "true"
+          # Re-run /review on every new commit (not describe/improve - cheaper). merge-flow's
+          # security gate only trusts a review newer than the head commit, so without this a
+          # PR that got more commits after opening would always fall back to "allow".
+          github_action_config.handle_push_trigger: "true"
+          github_action_config.push_commands: '["/review"]'
