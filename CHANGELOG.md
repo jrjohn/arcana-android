@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.26](https://github.com/jrjohn/arcana-android/compare/v1.1.25...v1.1.26) (2026-09-24)
+
+
+### Bug Fixes
+
+* **deps:** update dependency androidx.navigation:navigation-compose to v2.10.2 ([#100](https://github.com/jrjohn/arcana-android/issues/100)) ([15e077e](https://github.com/jrjohn/arcana-android/commit/15e077ee94f9ca653653aea48064bf6a5ea20efe))
+
 ## [1.1.25](https://github.com/jrjohn/arcana-android/compare/v1.1.24...v1.1.25) (2026-09-21)
 
 
