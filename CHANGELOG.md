@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.28](https://github.com/jrjohn/arcana-android/compare/v1.1.27...v1.1.28) (2026-09-25)
+
+
+### Bug Fixes
+
+* **deps:** update dependency org.mockito:mockito-core to v5.24.0 ([#104](https://github.com/jrjohn/arcana-android/issues/104)) ([e1bb155](https://github.com/jrjohn/arcana-android/commit/e1bb1554eaacb933226be8ee212abb499a84ee4b))
+
 ## [1.1.27](https://github.com/jrjohn/arcana-android/compare/v1.1.26...v1.1.27) (2026-09-25)
 
 
