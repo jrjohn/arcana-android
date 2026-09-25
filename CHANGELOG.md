@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.27](https://github.com/jrjohn/arcana-android/compare/v1.1.26...v1.1.27) (2026-09-25)
+
+
+### Bug Fixes
+
+* **deps:** update dependency androidx.work:work-runtime-ktx to v2.12.0 ([#102](https://github.com/jrjohn/arcana-android/issues/102)) ([706bed0](https://github.com/jrjohn/arcana-android/commit/706bed00ff42bbaa498e7c5a2ed0472a234dc341))
+
 ## [1.1.26](https://github.com/jrjohn/arcana-android/compare/v1.1.25...v1.1.26) (2026-09-24)
 
 
