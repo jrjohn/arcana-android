@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.29](https://github.com/jrjohn/arcana-android/compare/v1.1.28...v1.1.29) (2026-09-26)
+
+
+### Bug Fixes
+
+* **deps:** update dependency org.mockito.kotlin:mockito-kotlin to v6.4.0 ([#106](https://github.com/jrjohn/arcana-android/issues/106)) ([4115b8e](https://github.com/jrjohn/arcana-android/commit/4115b8ea569df7eb3e0cd5e839c5391f817f490c))
+
 ## [1.1.28](https://github.com/jrjohn/arcana-android/compare/v1.1.27...v1.1.28) (2026-09-25)
 
 
