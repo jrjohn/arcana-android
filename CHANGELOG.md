@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.31](https://github.com/jrjohn/arcana-android/compare/v1.1.30...v1.1.31) (2026-10-03)
+
+
+### Bug Fixes
+
+* **deps:** update eclipse-temurin docker tag to v27 ([#110](https://github.com/jrjohn/arcana-android/issues/110)) ([ad4a878](https://github.com/jrjohn/arcana-android/commit/ad4a8786a30b065df8c1570c038261d54b95529d))
+
 ## [1.1.30](https://github.com/jrjohn/arcana-android/compare/v1.1.29...v1.1.30) (2026-09-26)
 
 
