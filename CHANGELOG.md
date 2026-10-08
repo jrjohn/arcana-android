@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.34](https://github.com/jrjohn/arcana-android/compare/v1.1.33...v1.1.34) (2026-10-08)
+
+
+### Bug Fixes
+
+* **deps:** update kotlin monorepo to v2.4.21 ([#116](https://github.com/jrjohn/arcana-android/issues/116)) ([2c3770b](https://github.com/jrjohn/arcana-android/commit/2c3770b28a81f28d6f2ffe9cf43628806a0169f5))
+
 ## [1.1.33](https://github.com/jrjohn/arcana-android/compare/v1.1.32...v1.1.33) (2026-10-08)
 
 
