@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.32](https://github.com/jrjohn/arcana-android/compare/v1.1.31...v1.1.32) (2026-10-07)
+
+
+### Bug Fixes
+
+* **deps:** update gradle to v9.8.1 ([#112](https://github.com/jrjohn/arcana-android/issues/112)) ([a1ee351](https://github.com/jrjohn/arcana-android/commit/a1ee351853a11195eb47b6d780b9f07ee2ae3e97))
+
 ## [1.1.31](https://github.com/jrjohn/arcana-android/compare/v1.1.30...v1.1.31) (2026-10-03)
 
 
