@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.33](https://github.com/jrjohn/arcana-android/compare/v1.1.32...v1.1.33) (2026-10-08)
+
+
+### Bug Fixes
+
+* **deps:** update dependency org.jetbrains.kotlin.plugin.serialization to v2.4.21 ([#114](https://github.com/jrjohn/arcana-android/issues/114)) ([a7944e9](https://github.com/jrjohn/arcana-android/commit/a7944e90ae58498614e33cbaf72ad9d52831c62e))
+
 ## [1.1.32](https://github.com/jrjohn/arcana-android/compare/v1.1.31...v1.1.32) (2026-10-07)
 
 
