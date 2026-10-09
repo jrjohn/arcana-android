@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.35](https://github.com/jrjohn/arcana-android/compare/v1.1.34...v1.1.35) (2026-10-09)
+
+
+### Bug Fixes
+
+* **deps:** update kotlin to v2.4.21 ([#118](https://github.com/jrjohn/arcana-android/issues/118)) ([c05274d](https://github.com/jrjohn/arcana-android/commit/c05274d3278d5f7d219eb10c8a6e8078fddfc160))
+
 ## [1.1.34](https://github.com/jrjohn/arcana-android/compare/v1.1.33...v1.1.34) (2026-10-08)
 
 
