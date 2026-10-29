@@ -75,11 +75,12 @@ android {
         compose = true
         buildConfig = true
     }
-    // AGP 9.5.0 added a default `generateDebugComposePreviewRunfiles` configuration
-    // task for Compose Preview tooling that requires compiled Android resources to be
-    // visible to unit tests; without this, `:app`'s config fails with "Compose Preview
-    // failed for ':app' (variant 'debug'): Android resources are excluded from unit
-    // tests". AGP's own unitTests.isIncludeAndroidResources default is false.
+    // AGP 9.5.0 registers a generate<Variant>ComposePreviewRunfiles config task for
+    // every variant with Compose enabled (no opt-out flag exists, see
+    // https://github.com/ToxicBakery/BisonHerdr/issues/45). It requires unit tests to
+    // be enabled AND to include compiled Android resources for that variant. debug
+    // gets this by default; release does not (AGP only wires enableUnitTest=true for
+    // the testBuildType by default), so release needs the explicit opt-in below.
     testOptions {
         unitTests.isIncludeAndroidResources = true
     }
@@ -91,6 +92,12 @@ android {
             excludes += "**/libdatastore_shared_counter.so"
             excludes += "**/libandroidx.graphics.path.so"
         }
+    }
+}
+
+androidComponents {
+    beforeVariants(selector().withBuildType("release")) { variantBuilder ->
+        variantBuilder.enableUnitTest = true
     }
 }
 
