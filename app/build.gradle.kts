@@ -75,6 +75,14 @@ android {
         compose = true
         buildConfig = true
     }
+    // AGP 9.5.0 added a default `generateDebugComposePreviewRunfiles` configuration
+    // task for Compose Preview tooling that requires compiled Android resources to be
+    // visible to unit tests; without this, `:app`'s config fails with "Compose Preview
+    // failed for ':app' (variant 'debug'): Android resources are excluded from unit
+    // tests". AGP's own unitTests.isIncludeAndroidResources default is false.
+    testOptions {
+        unitTests.isIncludeAndroidResources = true
+    }
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
