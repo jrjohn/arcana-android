@@ -96,8 +96,12 @@ android {
 }
 
 androidComponents {
+    // enableUnitTest was removed from VariantBuilder; AGP 8.3+ exposes host tests
+    // (unit tests) as a queryable map instead. See
+    // https://github.com/android/gradle-recipes/blob/agp-8.8/disableTests/build-logic/plugins/src/main/kotlin/CustomPlugin.kt
     beforeVariants(selector().withBuildType("release")) { variantBuilder ->
-        variantBuilder.enableUnitTest = true
+        (variantBuilder as? com.android.build.api.variant.HasHostTestsBuilder)
+            ?.hostTests?.get(com.android.build.api.variant.HostTestBuilder.UNIT_TEST_TYPE)?.enable = true
     }
 }
 
