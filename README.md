@@ -482,7 +482,7 @@ fun UserDialog(
 | Category | Technology | Purpose |
 |----------|-----------|---------|
 | **Build Tool** | Gradle 9.8 (Kotlin DSL) | Build automation |
-| **Android Gradle Plugin** | AGP 9.4 | Android build toolchain |
+| **Android Gradle Plugin** | AGP 9.5 | Android build toolchain |
 | **compileSdk** | 37 | Compile-time Android API level |
 | **targetSdk / minSdk** | 36 / 28 | Runtime target / minimum API |
 
