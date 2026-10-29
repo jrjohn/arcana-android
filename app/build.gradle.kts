@@ -75,6 +75,15 @@ android {
         compose = true
         buildConfig = true
     }
+    // AGP 9.5.0 registers a generate<Variant>ComposePreviewRunfiles config task for
+    // every variant with Compose enabled (no opt-out flag exists, see
+    // https://github.com/ToxicBakery/BisonHerdr/issues/45). It requires unit tests to
+    // be enabled AND to include compiled Android resources for that variant. debug
+    // gets this by default; release does not (AGP only wires enableUnitTest=true for
+    // the testBuildType by default), so release needs the explicit opt-in below.
+    testOptions {
+        unitTests.isIncludeAndroidResources = true
+    }
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
@@ -83,6 +92,16 @@ android {
             excludes += "**/libdatastore_shared_counter.so"
             excludes += "**/libandroidx.graphics.path.so"
         }
+    }
+}
+
+androidComponents {
+    // enableUnitTest was removed from VariantBuilder; AGP 8.3+ exposes host tests
+    // (unit tests) as a queryable map instead. See
+    // https://github.com/android/gradle-recipes/blob/agp-8.8/disableTests/build-logic/plugins/src/main/kotlin/CustomPlugin.kt
+    beforeVariants(selector().withBuildType("release")) { variantBuilder ->
+        (variantBuilder as? com.android.build.api.variant.HasHostTestsBuilder)
+            ?.hostTests?.get(com.android.build.api.variant.HostTestBuilder.UNIT_TEST_TYPE)?.enable = true
     }
 }
 
