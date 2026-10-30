@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.39](https://github.com/jrjohn/arcana-android/compare/v1.1.38...v1.1.39) (2026-10-30)
+
+
+### Bug Fixes
+
+* **deps:** update dependency com.google.devtools.ksp to v2.3.13 ([#126](https://github.com/jrjohn/arcana-android/issues/126)) ([0e3e2cf](https://github.com/jrjohn/arcana-android/commit/0e3e2cf9accde02bcd50b0a905c739f4cc36e32a))
+
 ## [1.1.38](https://github.com/jrjohn/arcana-android/compare/v1.1.37...v1.1.38) (2026-10-29)
 
 
