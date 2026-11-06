@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.41](https://github.com/jrjohn/arcana-android/compare/v1.1.40...v1.1.41) (2026-11-06)
+
+
+### Bug Fixes
+
+* **deps:** update dependency org.jetbrains.dokka to v2.3.0 ([#131](https://github.com/jrjohn/arcana-android/issues/131)) ([b963b36](https://github.com/jrjohn/arcana-android/commit/b963b367882b050d195b983bc617c666259afd7e))
+
 ## [1.1.40](https://github.com/jrjohn/arcana-android/compare/v1.1.39...v1.1.40) (2026-11-05)
 
 
