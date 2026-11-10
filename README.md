@@ -7,7 +7,7 @@
 [![Production Ready](https://img.shields.io/badge/Production-Ready-brightgreen.svg)](#-architecture-evaluation)
 [![Kotlin](https://img.shields.io/badge/Kotlin-2.4.21%2B-purple)](https://kotlinlang.org)
 [![Compose](https://img.shields.io/badge/Jetpack%20Compose-Latest-blue.svg)](https://developer.android.com/jetpack/compose)
-[![AGP](https://img.shields.io/badge/AGP-9.5.1-green)](https://developer.android.com/build/releases/gradle-plugin)
+[![AGP](https://img.shields.io/badge/AGP-9.5-green)](https://developer.android.com/build/releases/gradle-plugin)
 [![compileSdk](https://img.shields.io/badge/compileSdk-37-brightgreen.svg)](https://developer.android.com/tools/releases/platforms)
 [![Gradle](https://img.shields.io/badge/Gradle-9.9-blue.svg)](https://gradle.org/releases/)
 [![Architecture](https://img.shields.io/badge/Architecture-Clean-green.svg)](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)
