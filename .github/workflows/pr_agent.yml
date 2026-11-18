@@ -33,8 +33,8 @@ jobs:
           # retired (shutdown 2026-10-16), so every model call failed and describe/review/improve
           # all silently produced nothing. gemini-flash-latest follows Google's current stable
           # Flash, so a retirement no longer takes the reviewer down.
-          config.model: "gemini/gemini-flash-latest"
-          config.fallback_models: '["gemini/gemini-3.5-flash-lite"]'
+          config.model: "gemini/gemini-3.5-flash-lite"
+          config.fallback_models: '["gemini/gemini-flash-latest"]'
           config.custom_model_max_tokens: "32000"
           github_action_config.auto_review: "true"
           github_action_config.auto_describe: "true"
