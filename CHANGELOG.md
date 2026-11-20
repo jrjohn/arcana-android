@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.47](https://github.com/jrjohn/arcana-android/compare/v1.1.46...v1.1.47) (2026-11-20)
+
+
+### Bug Fixes
+
+* **deps:** update lifecycle.viewmodel.compose to v2.11.1 ([#144](https://github.com/jrjohn/arcana-android/issues/144)) ([2738966](https://github.com/jrjohn/arcana-android/commit/2738966829a030a3122aa61c6595fffff1b5ab72))
+
 ## [1.1.46](https://github.com/jrjohn/arcana-android/compare/v1.1.45...v1.1.46) (2026-11-19)
 
 
