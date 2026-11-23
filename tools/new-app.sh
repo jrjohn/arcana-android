@@ -63,14 +63,18 @@ OLD_NS_RE="${OLD_NS//./\\.}"
 OLD_APPID_RE="${OLD_APPID//./\\.}"
 find . -type f ! -path './.git/*' -print0 | while IFS= read -r -d '' f; do
     grep -Iq . "$f" 2>/dev/null || continue   # skip binaries / empty files
-    if grep -qE "${OLD_NS_RE}|${OLD_APPID_RE}|${OLD_KEY}|${OLD_REPO}" "$f"; then
-        sed -i.bak -E \
-            -e "s/${OLD_NS_RE}/${APPID}/g" \
-            -e "s/${OLD_APPID_RE}/${APPID}/g" \
-            -e "s/${OLD_KEY}/${APP}/g" \
-            -e "s/${OLD_REPO}/${APP}/g" "$f"
+    if grep -qE "${OLD_NS_RE}|${OLD_APPID_RE}" "$f"; then
+        sed -i.bak -E -e "s/${OLD_NS_RE}/${APPID}/g" -e "s/${OLD_APPID_RE}/${APPID}/g" "$f"
         rm -f "$f.bak"
     fi
+done
+# Sonar key / Jenkins names / repo name: only in CI and docs files, and only as a whole token
+# (a global replace of "android-app" also hits "android-application" in libs.versions.toml).
+for f in Jenkinsfile sonar-project.properties docker-compose.ci.yml README.md AGENTS.md; do
+    [ -f "$f" ] || continue
+    sed -i.bak -E -e "s/(^|[^A-Za-z0-9-])${OLD_KEY}([^A-Za-z0-9-]|$)/\\1${APP}\\2/g" \
+        -e "s/(^|[^A-Za-z0-9-])${OLD_REPO}([^A-Za-z0-9-]|$)/\\1${APP}\\2/g" "$f"
+    rm -f "$f.bak"
 done
 sed -i.bak -E "s/^rootProject\.name[[:space:]]*=.*/rootProject.name = \"${APP}\"/" settings.gradle.kts && rm -f settings.gradle.kts.bak
 sed -i.bak -E "s/versionCode = [0-9]+/versionCode = 1/; s/versionName = \"[^\"]*\"/versionName = \"0.1.0\"/" app/build.gradle.kts && rm -f app/build.gradle.kts.bak
