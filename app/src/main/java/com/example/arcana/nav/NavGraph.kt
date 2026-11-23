@@ -21,6 +21,7 @@ private object Routes {
     const val USER_CRUD = "user_crud"
     const val USER_DETAIL = "user_detail/{userId}"
     const val USER_DETAIL_PREFIX = "user_detail/"
+    // new-feature:routes (tools/new-feature.sh inserts above this line)
 
     fun userDetail(userId: Int): String = "user_detail/$userId"
 }
@@ -49,6 +50,7 @@ fun NavGraph(
                 route == Routes.HOME -> AnalyticsScreens.HOME
                 route == Routes.USER_CRUD -> AnalyticsScreens.USER_CRUD
                 route.startsWith(Routes.USER_DETAIL_PREFIX) -> AnalyticsScreens.USER_DETAIL
+                // new-feature:screen-names (tools/new-feature.sh inserts above this line)
                 else -> route
             }
         }
@@ -56,7 +58,12 @@ fun NavGraph(
 
     NavHost(navController = navController, startDestination = Routes.HOME) {
         composable(Routes.HOME) {
-            HomeScreen(onNavigateToUserCrud = { navController.navigate(Routes.USER_CRUD) })
+            HomeScreen(
+                onNavigateToUserCrud = { navController.navigate(Routes.USER_CRUD) },
+                featureEntries = listOf(
+                    // new-feature:home-entries (tools/new-feature.sh inserts above this line)
+                )
+            )
         }
         composable(Routes.USER_CRUD) {
             UserScreen(
@@ -74,5 +81,6 @@ fun NavGraph(
                 onNavigateBack = { navController.popBackStack() }
             )
         }
+        // new-feature:destinations (tools/new-feature.sh inserts above this line)
     }
 }
