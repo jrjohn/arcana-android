@@ -5,7 +5,7 @@ in this repository **or in any product created from it**. `CLAUDE.md`, `GEMINI.m
 `.github/copilot-instructions.md` all point here; this file is the single source.
 
 > **You MUST NOT report a task as done until `tools/arch-check.sh` exits 0 and the Gradle
-> commands in §5 pass.** Violations are blocked twice: the pre-commit hook
+> commands in §6 pass.** Violations are blocked twice: the pre-commit hook
 > (`tools/githooks/pre-commit`) rejects Kotlin files outside the layer packages, `*Impl`
 > imports outside `di/`, and ViewModels without Input/Output/Effect; CI (Jenkins stage
 > "Architecture Qube", threshold 90) blocks the merge. Skipping this costs the product its
@@ -74,25 +74,49 @@ The User feature shows every layer: `UserScreen` → `UserViewModel` → `UserSe
 `di/RepositoryModule.kt`. For a clean new slice, run `tools/new-feature.sh Sample` in a scratch
 branch and read what it generates.
 
-## 5. Before you say "done"
+## 5. Architecture check (arch-qube)
+
+arch-qube (https://github.com/jrjohn/arcana-arch-qube) scans the source for layer-direction,
+DI, MVVM and naming violations and scores it; usage guide:
+https://github.com/jrjohn/arcana-skills/tree/main/arch-qube-skill. The version is pinned in
+`tools/arch-qube.version` (0.5.6), read by both `tools/arch-check.sh` and the Jenkinsfile.
+
+- Run: `tools/arch-check.sh`. It uses `ghcr.io/jrjohn/arch-qube:<version>` (public,
+  multi-arch), then `arcana.boo/arcana/arch-qube:<version>`, with the same
+  `--framework android`, `--threshold 90` and exclusions as Jenkins stage "Architecture Qube".
+  Exit 0 = pass, 1 = fail, 2 = could not run (no Docker / neither image pullable) — 2 is
+  **not** a pass. There is no `:latest` fallback on purpose.
+- Without Docker: on a tree without `build/`, `app/build/`, `.gradle/`, `buildSrc/build/`,
+  run `pipx run --spec git+https://github.com/jrjohn/arcana-arch-qube.git@v0.5.6 arch-qube scan . --framework android --no-ai --ci --format json,markdown -o arch-qube-reports --threshold 90`.
+- Report: `arch-qube-reports/arch-qube.md` (summary) and `arch-qube.json` (per rule:
+  `files_checked`, violations). PASS needs the score ≥ threshold **and** zero violations in
+  every critical rule — a 99.4 can still FAIL. Read it rule by rule:
+  - a rule under "Not evaluated" (here: MVVM I/O/E Structure, MVVM I/O/E Models Binding,
+    4-Layer Progressive Cache, Offline-First Design, Defense-in-Depth Security — AI-only with
+    `--no-ai`) is **not** a pass for code you touched; review it by hand against §3;
+  - a rule with `files_checked: 0` checked nothing;
+  - an unlayered project scores 0 on "Layer Direction Enforcement".
+- `--ci` prints nothing on failure. Rerun without `--ci` (or open `arch-qube.md`) to see why.
+- False positive: open an issue on arcana-arch-qube with the report attached. Never lower
+  `--threshold`, add exclusions, or move code to dodge a rule.
+
+## 6. Before you say "done"
 
 Run these, in this order, and paste the last line of each into your summary:
 
 ```bash
 ./gradlew testDebugUnitTest --no-daemon     # CI stage "Unit Tests with Coverage"
 ./gradlew assembleDebug --no-daemon         # CI stage "Gradle Build"
-tools/arch-check.sh                         # CI stage "Architecture Qube": same image, framework android, threshold 90
+tools/arch-check.sh                         # CI stage "Architecture Qube": pinned image, framework android, threshold 90 (§5)
 ```
 
 Outside the CI image, `gradle.properties` points aapt2 at `/opt/android-sdk/...`; add
 `-Pandroid.aapt2FromMavenOverride=$ANDROID_HOME/build-tools/36.0.0/aapt2` to both commands.
 
-`arch-check.sh` exit 1 means fail; exit 2 means it could not run (no Docker / image) — that
-is **not** a pass, say so. Do not lower `--threshold`, add exclusions, or move code to dodge a
-rule — fix the structure. CI also runs SonarQube (coverage ≥ 80%) which you cannot run
-locally; keep R7.
+`arch-check.sh` exit 2 means it could not run — **not** a pass, say so (§5). CI also runs
+SonarQube (coverage ≥ 80%) which you cannot run locally; keep R7.
 
-## 6. Reference
+## 7. Reference
 
 - Detailed patterns: `arcana-android-developer-skill`
   (https://github.com/jrjohn/arcana-skills/tree/main/arcana-android-developer-skill).

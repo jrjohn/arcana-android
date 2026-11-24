@@ -778,7 +778,7 @@ done
 
 cat <<EOF
 
-done. Next (AGENTS.md §5):
+done. Next (AGENTS.md §6):
   ./gradlew testDebugUnitTest assembleDebug
   tools/arch-check.sh
 Then replace the placeholder fields (title, amountCents) with the real ones in ALL of:
