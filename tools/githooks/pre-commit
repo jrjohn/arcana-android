@@ -1,0 +1,66 @@
+#!/usr/bin/env bash
+# Fast architecture checks on the staged files (no docker, no Gradle). The full scan is
+# tools/arch-check.sh and CI. Rules are numbered as in AGENTS.md §3.
+#
+# Regex ([[ =~ ]]), not `case` globs: in a case pattern `*` also matches `/`, so a glob like
+# `*/ui/*.kt` accepts files at any depth and a glob blacklist rejects correctly layered files
+# (that exact bug false-blocked correct files in the arcana-embedded-esp32 version).
+set -euo pipefail
+
+ROOT="$(git rev-parse --show-toplevel)"
+NS="$(sed -nE 's/^[[:space:]]*namespace[[:space:]]*=[[:space:]]*"([^"]+)".*/\1/p' "$ROOT/app/build.gradle.kts" | head -1)"
+[ -n "$NS" ] || { echo "pre-commit: cannot read namespace from app/build.gradle.kts" >&2; exit 1; }
+PKG="${NS//./\/}"
+PKG_RE="${PKG//./\\.}"
+LAYERS='(core|data|di|domain|nav|sync|ui)'
+
+fail=0
+block() { echo "pre-commit: $1" >&2; fail=1; }
+
+# R1: new Kotlin source must live in a layer package (app entry points excepted).
+while IFS= read -r f; do
+    [ -n "$f" ] || continue
+    [[ "$f" =~ \.kt$ ]] || continue
+    [[ "$f" =~ ^buildSrc/ ]] && continue
+    if [[ "$f" =~ ^app/src/main/java/${PKG_RE}/(MainActivity|MyApplication)\.kt$ ]]; then
+        continue
+    elif [[ "$f" =~ ^app/src/(main|test|androidTest)/java/${PKG_RE}/${LAYERS}/.+\.kt$ ]]; then
+        continue
+    elif [[ "$f" =~ ^app/src/(test|androidTest)/java/${PKG_RE}/[^/]+\.kt$ ]]; then
+        continue   # top-level test classes (ExampleUnitTest) are not production code
+    fi
+    block "$f — new Kotlin file outside the layer packages ${NS}.{core,data,di,domain,nav,sync,ui}. Put it in a layer (AGENTS.md §2) or run tools/new-feature.sh"
+done <<< "$(git diff --cached --name-only --diff-filter=AR)"
+
+# R2: only Hilt modules in di/ (and tests) may import an implementation class
+# (anything in an `.impl.` package or named *Impl).
+while IFS= read -r f; do
+    [ -n "$f" ] || continue
+    [[ "$f" =~ ^app/src/main/java/.+\.kt$ ]] || continue
+    [[ "$f" =~ ^app/src/main/java/${PKG_RE}/di/[^/]+\.kt$ ]] && continue
+    [ -f "$f" ] || continue
+    hits="$(git show ":$f" | grep -nE '^[[:space:]]*import[[:space:]]+[A-Za-z0-9_.]*(\.impl\.[A-Za-z0-9_.]+|Impl)([[:space:]]+as[[:space:]]+[A-Za-z0-9_]+)?[[:space:]]*$' || true)"
+    # a file inside an impl package may import its siblings
+    if [ -n "$hits" ] && [[ ! "$f" =~ /impl/[^/]+\.kt$ ]]; then
+        block "$f imports an implementation — depend on the interface, bind it in di/ (AGENTS.md R2):"
+        echo "$hits" | sed 's/^/    /' >&2
+    fi
+done <<< "$(git diff --cached --name-only --diff-filter=ACMR)"
+
+# R4: a ViewModel declares Input / Output / Effect and the single onEvent(input) entry.
+# arch-qube reports its MVVM I/O/E rules as NOT EVALUATED (AI-only), so this is the only
+# mechanical check of it.
+while IFS= read -r f; do
+    [ -n "$f" ] || continue
+    [[ "$f" =~ ^app/src/main/java/${PKG_RE}/ui/.+ViewModel\.kt$ ]] || continue
+    [ -f "$f" ] || continue
+    body="$(git show ":$f")"
+    for pat in 'sealed (interface|class) Input' 'data class Output' 'sealed (interface|class) Effect' 'fun onEvent\(input: Input\)'; do
+        grep -qE "$pat" <<< "$body" || block "$f — ViewModel lacks \`$pat\` (MVVM Input/Output/Effect, AGENTS.md R4)"
+    done
+done <<< "$(git diff --cached --name-only --diff-filter=ACMR)"
+
+if [ "$fail" -ne 0 ]; then
+    echo "pre-commit: blocked. Full check: tools/arch-check.sh" >&2
+    exit 1
+fi

@@ -59,7 +59,7 @@ object DatabaseModule {
             AppDatabase::class.java,
             "arcana.db"
         )
-            .addMigrations(MIGRATION_3_4, MIGRATION_4_5)
+            .addMigrations(MIGRATION_3_4, MIGRATION_4_5) // new-feature:migrations
             .fallbackToDestructiveMigration(dropAllTables = true) // Fallback only if migration fails
             .build()
     }

@@ -15,3 +15,5 @@ Gemfile.lock
 
 # CI release-signing keystore (staged from Jenkins credential at build time)
 keystore.jks
+arch-qube-reports/
+.kotlin/

@@ -14,6 +14,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -40,10 +41,14 @@ import com.example.arcana.ui.theme.ArcanaIndigo
 import com.example.arcana.ui.theme.ArcanaPurple
 import com.example.arcana.ui.theme.ArcanaViolet
 
+/** A navigation entry on the home screen; NavGraph passes one per feature (tools/new-feature.sh). */
+data class HomeEntry(val label: String, val onClick: () -> Unit)
+
 @Composable
 fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel(),
-    onNavigateToUserCrud: () -> Unit
+    onNavigateToUserCrud: () -> Unit,
+    featureEntries: List<HomeEntry> = emptyList()
 ) {
     val uiState by viewModel.output.collectAsState()
 
@@ -191,6 +196,13 @@ fun HomeScreen(
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(horizontal = 8.dp)
                     )
+                }
+
+                featureEntries.forEach { entry ->
+                    Spacer(modifier = Modifier.height(12.dp))
+                    OutlinedButton(onClick = entry.onClick) {
+                        Text(text = entry.label, color = ArcanaGlow)
+                    }
                 }
             }
         }
