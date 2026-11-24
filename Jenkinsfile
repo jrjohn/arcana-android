@@ -151,8 +151,12 @@ pipeline {
             steps {
                 sh '''
                     docker rm -f arcana-test-build-${BUILD_NUMBER} 2>/dev/null || true
+                    # Jenkins runs sh with -e: without set +e a red test run aborted on the next line, so
+                    # `exit $TEST_RC` was dead code and the JUnit/JaCoCo reports were never copied out.
+                    set +e
                     docker compose -f docker-compose.ci.yml run --name arcana-test-build-${BUILD_NUMBER} android-test
                     TEST_RC=$?
+                    set -e
                     mkdir -p app/build/reports app/build/test-results app/build/outputs
                     docker cp arcana-test-build-${BUILD_NUMBER}:/project/app/build/reports/. app/build/reports/ 2>/dev/null || true
                     docker cp arcana-test-build-${BUILD_NUMBER}:/project/app/build/test-results/. app/build/test-results/ 2>/dev/null || true
@@ -337,21 +341,39 @@ pipeline {
             // through anonymous volumes (/src, /output) that exist for the container.
             steps {
                 sh '''
-                    docker rm -f arcana-arch-qube-android-${BUILD_NUMBER} 2>/dev/null || true
-                    docker create --name arcana-arch-qube-android-${BUILD_NUMBER} --network devops_default \
+                    # Branch in the name: BUILD_NUMBER restarts at 1 on every branch, so two branches building
+                    # at once used the same name and one's `docker rm -f` deleted the other's container.
+                    AQ="arcana-arch-qube-android-$(printf '%s' "${BRANCH_NAME}-${BUILD_NUMBER}" | tr -c 'A-Za-z0-9_.-' '-')"
+                    docker rm -fv "$AQ" 2>/dev/null || true
+                    # Version pinned in tools/arch-qube.version (shared with tools/arch-check.sh).
+                    # ghcr.io first (public, multi-arch), then arcana.boo. NO :latest fallback:
+                    # an unpinned image changes the verdict without a commit in this repo.
+                    AQ_VER="$(tr -d '[:space:]' < tools/arch-qube.version)"
+                    AQ_IMG=""
+                    for c in "ghcr.io/jrjohn/arch-qube:$AQ_VER" "arcana.boo/arcana/arch-qube:$AQ_VER"; do
+                        if docker image inspect "$c" >/dev/null 2>&1 || docker pull -q "$c" >/dev/null 2>&1; then AQ_IMG="$c"; break; fi
+                    done
+                    [ -n "$AQ_IMG" ] || { echo "arch-qube $AQ_VER image not pullable from ghcr.io or arcana.boo — NOT a pass"; exit 1; }
+                    docker create --name "$AQ" --network devops_default \
                         -v /src -v /output \
-                        arcana.boo/arcana/arch-qube:latest \
+                        "$AQ_IMG" \
                         scan /src --framework android --no-ai --ci \
                         --format json,markdown -o /output --threshold 90 || exit 1
+                    # Same exclusions as tools/arch-check.sh.
                     tar --exclude=./.git --exclude=./app/build --exclude=./build \
                         --exclude=./.gradle --exclude=./.scannerwork \
-                        --exclude=./arch-qube-reports -C . -cf - . \
-                        | docker cp - arcana-arch-qube-android-${BUILD_NUMBER}:/src || exit 1
-                    docker start -a arcana-arch-qube-android-${BUILD_NUMBER}
+                        --exclude=./arch-qube-reports \
+                        --exclude=./buildSrc/build --exclude=./buildSrc/.gradle -C . -cf - . \
+                        | docker cp - "$AQ":/src || exit 1
+                    # Jenkins runs sh with -e: without set +e a failing scan aborts here and the
+                    # report that says WHY is never copied out.
+                    set +e
+                    docker start -a "$AQ"
                     AQ_RC=$?
+                    set -e
                     mkdir -p arch-qube-reports
-                    docker cp arcana-arch-qube-android-${BUILD_NUMBER}:/output/. arch-qube-reports/ 2>/dev/null || true
-                    docker rm -f arcana-arch-qube-android-${BUILD_NUMBER} 2>/dev/null || true
+                    docker cp "$AQ":/output/. arch-qube-reports/ 2>/dev/null || true
+                    docker rm -fv "$AQ" 2>/dev/null || true
                     exit $AQ_RC
                 '''
             }
