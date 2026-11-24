@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/jrjohn/arcana-android/compare/v1.1.49...v1.2.0) (2026-11-24)
+
+
+### Features
+
+* make the template self-explaining to AI coding agents (AGENTS.md + scaffolding + hook) ([#151](https://github.com/jrjohn/arcana-android/issues/151)) ([185ee32](https://github.com/jrjohn/arcana-android/commit/185ee32b6bf1b38608b36fab6b99ae935b825c2b))
+
 ## [1.1.49](https://github.com/jrjohn/arcana-android/compare/v1.1.48...v1.1.49) (2026-11-21)
 
 
