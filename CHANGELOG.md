@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.0](https://github.com/jrjohn/arcana-android/compare/v1.2.1...v1.3.0) (2026-11-25)
+
+
+### Features
+
+* enforce arch-check locally (Claude Code Stop hook + pre-push) ([#157](https://github.com/jrjohn/arcana-android/issues/157)) ([32045fe](https://github.com/jrjohn/arcana-android/commit/32045fed4663f78b1284439375e874fb32d1fefd))
+
 ## [1.2.1](https://github.com/jrjohn/arcana-android/compare/v1.2.0...v1.2.1) (2026-11-25)
 
 
