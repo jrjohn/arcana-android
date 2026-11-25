@@ -14,7 +14,12 @@ plugins {
 
 android {
     namespace = "com.example.arcana"
-    compileSdk = 37
+    // androidx.compose 1.13 (BOM 2026.11.01) 要求 compileSdk >= 37.1;只動編譯 API,targetSdk 不變。
+    compileSdk {
+        version = release(37) {
+            minorApiLevel = 2
+        }
+    }
 
     defaultConfig {
         applicationId = "com.arcana.example"
