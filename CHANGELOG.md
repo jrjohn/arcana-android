@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.1](https://github.com/jrjohn/arcana-android/compare/v1.3.0...v1.3.1) (2026-11-25)
+
+
+### Bug Fixes
+
+* **deps:** update dependency com.android.application to v9.5.3 ([#159](https://github.com/jrjohn/arcana-android/issues/159)) ([49dd5ca](https://github.com/jrjohn/arcana-android/commit/49dd5ca5c6024e1d52b42175aab03aaabcfae778))
+
 ## [1.3.0](https://github.com/jrjohn/arcana-android/compare/v1.2.1...v1.3.0) (2026-11-25)
 
 
