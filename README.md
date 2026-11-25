@@ -29,6 +29,17 @@
 
 ---
 
+## Start here
+
+| Task | Command / rule |
+|---|---|
+| AI coding agents (Claude Code, Codex, Cursor, Copilot, Gemini) | Read [`AGENTS.md`](AGENTS.md) first — it is the single source of the layering rules. A task is not done until `tools/arch-check.sh` exits 0. |
+| New product | `tools/new-app.sh <app-name> <dest-dir> [applicationId]` — copies the full layered skeleton + `AGENTS.md` + checks and installs the git hooks. Do **not** copy individual folders into a new project: the rules and checks would not come along. |
+| New feature | `tools/new-feature.sh <FeatureName>` |
+| Fresh clone of this repo | Run `tools/install-hooks.sh` once (git does not install hooks on clone). |
+| Architecture check | `tools/arch-check.sh` — needs Docker only; pulls the pinned arch-qube image (version in `tools/arch-qube.version`, kept current by Renovate) from public ghcr.io, no login. No Docker: use the `pipx` command in `AGENTS.md`. |
+| CI | Keep the Jenkins **Architecture Qube** stage connected in products — it is the last gate. |
+
 ## 🏆 Architecture Evaluation
 
 **Overall Grade: A+ (9.2/10)** - Production-Ready, Enterprise-Level Architecture
