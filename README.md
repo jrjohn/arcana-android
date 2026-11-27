@@ -2,28 +2,28 @@
 
 > A modern Android application demonstrating **Clean Architecture**, **Offline-First** design, and **AOP Analytics** with Jetpack Compose.
 
-[![Architecture Rating](https://img.shields.io/badge/Architecture%20Rating-⭐⭐⭐⭐⭐%209.2%2F10-gold.svg)](#-architecture-evaluation)
-[![Grade](https://img.shields.io/badge/Grade-A+-success.svg)](#-architecture-evaluation)
-[![Production Ready](https://img.shields.io/badge/Production-Ready-brightgreen.svg)](#-architecture-evaluation)
-[![Kotlin](https://img.shields.io/badge/Kotlin-2.4.21%2B-purple)](https://kotlinlang.org)
-[![Compose](https://img.shields.io/badge/Jetpack%20Compose-Latest-blue.svg)](https://developer.android.com/jetpack/compose)
-[![AGP](https://img.shields.io/badge/AGP-9.5-green)](https://developer.android.com/build/releases/gradle-plugin)
-[![compileSdk](https://img.shields.io/badge/compileSdk-37-brightgreen.svg)](https://developer.android.com/tools/releases/platforms)
-[![Gradle](https://img.shields.io/badge/Gradle-9.9-blue.svg)](https://gradle.org/releases/)
-[![Architecture](https://img.shields.io/badge/Architecture-Clean-green.svg)](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)
-[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Architecture Rating](.github/badges/architecture-rating-9-2-10-gold-svg-14cd4a12.svg)](#-architecture-evaluation)
+[![Grade](.github/badges/grade-a-success-svg-d6d750cf.svg)](#-architecture-evaluation)
+[![Production Ready](.github/badges/production-ready-brightgreen-svg-c1324639.svg)](#-architecture-evaluation)
+[![Kotlin](.github/badges/kotlin-2-4-21-purple-8aa3f7b1.svg)](https://kotlinlang.org)
+[![Compose](.github/badges/jetpack-compose-latest-blue-svg-1275a89b.svg)](https://developer.android.com/jetpack/compose)
+[![AGP](.github/badges/agp-9-5-green-7cca877a.svg)](https://developer.android.com/build/releases/gradle-plugin)
+[![compileSdk](.github/badges/compilesdk-37-brightgreen-svg-49575197.svg)](https://developer.android.com/tools/releases/platforms)
+[![Gradle](.github/badges/gradle-9-9-blue-svg-a5813591.svg)](https://gradle.org/releases/)
+[![Architecture](.github/badges/architecture-clean-green-svg-dcc90edb.svg)](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)
+[![License](.github/badges/license-mit-yellow-svg-7a4eb7dd.svg)](LICENSE)
 
 <!-- agent-managed badges START -->
 <p align="center">
-  <a href="https://arcana.boo/sonarqube/dashboard?id=android-app"><img src="https://img.shields.io/badge/Quality_Gate-OK-brightgreen?style=for-the-badge" alt="Quality Gate"></a>
-  <a href="https://arcana.boo/jenkins/job/android-app-pipeline-mb/job/main/"><img src="https://img.shields.io/badge/Build-passing-brightgreen?style=for-the-badge" alt="Build"></a>
+  <a href="https://arcana.boo/sonarqube/dashboard?id=android-app"><img src=".github/badges/quality-gate-ok-brightgreen-7365c32e.svg" alt="Quality Gate"></a>
+  <a href="https://arcana.boo/jenkins/job/android-app-pipeline-mb/job/main/"><img src=".github/badges/build-passing-brightgreen-f2a434e1.svg" alt="Build"></a>
 </p>
 <!-- agent-managed badges END -->
 <!-- arch-rank START -->
 <p align="center">
-  <img src="https://img.shields.io/badge/arch--qube-100%2F100-blue?style=for-the-badge" alt="arch-qube">
-  <img src="https://img.shields.io/badge/Grade-A%2B-brightgreen?style=for-the-badge" alt="Grade">
-  <img src="https://img.shields.io/badge/Arch_Gate-PASS-brightgreen?style=for-the-badge" alt="Architecture Gate">
+  <img src=".github/badges/arch-qube-100-100-blue-2f391344.svg" alt="arch-qube">
+  <img src=".github/badges/grade-a-brightgreen-1f1e6c73.svg" alt="Grade">
+  <img src=".github/badges/arch-gate-pass-brightgreen-887cab17.svg" alt="Architecture Gate">
 </p>
 <!-- arch-rank END -->
 
