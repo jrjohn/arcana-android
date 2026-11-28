@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.4](https://github.com/jrjohn/arcana-android/compare/v1.3.3...v1.3.4) (2026-11-28)
+
+
+### Bug Fixes
+
+* **deps:** update gradle to v9.9.3 ([#166](https://github.com/jrjohn/arcana-android/issues/166)) ([fe89205](https://github.com/jrjohn/arcana-android/commit/fe89205a1983993aaeab98efbdcfae358a48db99))
+
 ## [1.3.3](https://github.com/jrjohn/arcana-android/compare/v1.3.2...v1.3.3) (2026-11-27)
 
 
